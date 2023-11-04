@@ -1,4 +1,3 @@
-//
 //  ViewController.swift
 //  Remindify
 //
@@ -6,18 +5,51 @@
 //
 
 import UIKit
+import FirebaseCore
+import FirebaseAuth
 
 class LoginViewController: UIViewController {
 
-    
+    @IBOutlet weak var warningLabel: UILabel!
     @IBOutlet weak var emailTextField: UITextField!
     
     @IBOutlet weak var passwordTextField: UITextField!
 
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-        //navigate to profile
-        let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
-        self.navigationController?.pushViewController(profileViewController, animated: true)
+        
+        let userEmail = emailTextField.text
+        let userPassword = passwordTextField.text
+        //create user
+        if let email = userEmail, let password = userPassword{
+        Auth.auth().signIn(withEmail: email, password: password) {authResult, error in
+            if let error = error {
+                print(error.localizedDescription)
+                if error.localizedDescription == "An internal error has occurred, print and inspect the error details for more information."{
+                    DispatchQueue.main.async {
+                        self.warningLabel.isHidden = false
+                        self.warningLabel.text = "Wrong username or password. Try again. "
+                    }
+                }else{
+                    DispatchQueue.main.async {
+                        self.warningLabel.isHidden = false
+                        self.warningLabel.text = "\(error.localizedDescription)"
+                    }
+                }
+                
+            } else {
+                //navigate to profile
+                let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+                self.navigationController?.pushViewController(profileViewController, animated: true)
+            }
+        }
+        }else{
+            DispatchQueue.main.async {
+                self.warningLabel.isHidden = false
+                self.warningLabel.text = "An error occured. Try again."
+            }
+        }
+        
+        
     }
     
     @IBAction func signupButtonPressed(_ sender: UIButton) {
@@ -28,9 +60,10 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.warningLabel.isHidden = true
     }
 
-
+    override func viewWillAppear(_ animated: Bool) {
+        self.warningLabel.isHidden = true
+    }
 }
-

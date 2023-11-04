@@ -25,18 +25,6 @@
                                     <action selector="loginButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="USP-9f-BJA"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="fatima@gmail.com" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lyh-J6-Lfb">
-                                <rect key="frame" x="59" y="292" width="258" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8EF-R1-mTz">
-                                <rect key="frame" x="62" y="340" width="252" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qdq-7b-x0u">
                                 <rect key="frame" x="101" y="488" width="177" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -46,6 +34,25 @@
                                     <action selector="signupButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8gf-S3-BPq"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="fatima@gmail.com" borderStyle="roundedRect" placeholder="fatima@gmail.com" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lyh-J6-Lfb">
+                                <rect key="frame" x="59" y="292" width="258" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="123456" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8EF-R1-mTz">
+                                <rect key="frame" x="62" y="340" width="252" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Password and Confirm Password does not match" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ast-zb-CUq">
+                                <rect key="frame" x="53" y="390" width="264" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                <color key="textColor" systemColor="systemRedColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -54,6 +61,7 @@
                     <connections>
                         <outlet property="emailTextField" destination="lyh-J6-Lfb" id="jDy-rD-hlJ"/>
                         <outlet property="passwordTextField" destination="8EF-R1-mTz" id="GJz-wg-Gfg"/>
+                        <outlet property="warningLabel" destination="Ast-zb-CUq" id="BCa-Gx-72D"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -121,6 +129,13 @@
                         <viewLayoutGuide key="safeArea" id="O1o-1V-t2n"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <connections>
+                        <outlet property="confirmPasswordTextField" destination="n6u-Dn-Ysb" id="Gk7-OS-9of"/>
+                        <outlet property="emailTextField" destination="WvO-lE-tzk" id="gjd-DD-OqD"/>
+                        <outlet property="nameTextField" destination="suN-bf-Efb" id="FIt-Xt-efT"/>
+                        <outlet property="passwordTextField" destination="b8r-Dh-VF4" id="fDF-Fm-KqG"/>
+                        <outlet property="warningTextField" destination="1xP-uG-Xh8" id="MSB-Cp-J56"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nDf-4S-haf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -139,13 +154,13 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Your Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Jn3-35-ohf">
-                                <rect key="frame" x="149" y="356" width="97" height="34"/>
+                                <rect key="frame" x="106" y="356" width="180" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tT3-2J-S0U">
-                                <rect key="frame" x="150" y="427" width="97" height="34"/>
+                                <rect key="frame" x="104" y="430" width="182" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -156,7 +171,32 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Change Password"/>
                                 <connections>
-                                    <action selector="changePasswordButtonPressed:" destination="yeM-ft-uUH" eventType="touchUpInside" id="ZFF-o9-M40"/>
+                                    <action selector="changePasswordButtonPressed:" destination="yeM-ft-uUH" eventType="touchUpInside" id="AH2-ID-lyI"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZGB-Qe-waH">
+                                <rect key="frame" x="302" y="357" width="52" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="✅"/>
+                                <connections>
+                                    <action selector="saveNameButton:" destination="yeM-ft-uUH" eventType="touchUpInside" id="UU9-4L-ViW"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Password and Confirm Password does not match" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VkT-qs-Gt1">
+                                <rect key="frame" x="68" y="400" width="264" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                <color key="textColor" systemColor="systemRedColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EXx-Yg-twn">
+                                <rect key="frame" x="130" y="300" width="134" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Change Image"/>
+                                <connections>
+                                    <action selector="changeImageButtonPressed:" destination="yeM-ft-uUH" eventType="touchUpInside" id="8zl-P8-omI"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -166,6 +206,9 @@
                     <connections>
                         <outlet property="emailTextField" destination="tT3-2J-S0U" id="dJ7-wp-Fbw"/>
                         <outlet property="nameTextField" destination="Jn3-35-ohf" id="bs1-nz-wMH"/>
+                        <outlet property="profileImageView" destination="ZqI-Bw-0Xr" id="pY0-H6-9gx"/>
+                        <outlet property="saveButton" destination="ZGB-Qe-waH" id="dbG-vQ-yVZ"/>
+                        <outlet property="warningLabel" destination="VkT-qs-Gt1" id="1lX-73-C7z"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="e6L-ID-QXB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -218,6 +261,12 @@
                         <viewLayoutGuide key="safeArea" id="pBV-qf-KB8"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <connections>
+                        <outlet property="confirmPasswordTextField" destination="4XF-VQ-0nY" id="GqV-FF-mB7"/>
+                        <outlet property="newPasswordTextField" destination="FNV-Sz-jEm" id="G9d-fn-abc"/>
+                        <outlet property="oldPasswordTextField" destination="0yY-sd-v0F" id="axo-cc-ITG"/>
+                        <outlet property="warningLabel" destination="adq-3p-MHU" id="nBh-pX-k2q"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fh1-5P-vjt" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

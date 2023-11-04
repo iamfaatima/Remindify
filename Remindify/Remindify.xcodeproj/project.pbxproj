@@ -16,6 +16,10 @@
 		D7B712142AF5091E00424557 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712132AF5091E00424557 /* SignupViewController.swift */; };
 		D7B712162AF5094E00424557 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712152AF5094E00424557 /* ProfileViewController.swift */; };
 		D7B712182AF5095F00424557 /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712172AF5095F00424557 /* PasswordViewController.swift */; };
+		D7B7121B2AF51D2000424557 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D7B7121A2AF51D2000424557 /* FirebaseAuth */; };
+		D7B7121D2AF51D2000424557 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D7B7121C2AF51D2000424557 /* FirebaseFirestore */; };
+		D7B7121F2AF51D2100424557 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D7B7121E2AF51D2000424557 /* FirebaseFirestoreSwift */; };
+		D7B712232AF5226A00424557 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D7B712222AF5226A00424557 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +34,7 @@
 		D7B712132AF5091E00424557 /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		D7B712152AF5094E00424557 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		D7B712172AF5095F00424557 /* PasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordViewController.swift; sourceTree = "<group>"; };
+		D7B712222AF5226A00424557 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7B7121B2AF51D2000424557 /* FirebaseAuth in Frameworks */,
+				D7B7121D2AF51D2000424557 /* FirebaseFirestore in Frameworks */,
+				D7B7121F2AF51D2100424557 /* FirebaseFirestoreSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +78,7 @@
 				D7B712052AF505E500424557 /* Assets.xcassets */,
 				D7B712072AF505E500424557 /* LaunchScreen.storyboard */,
 				D7B7120A2AF505E500424557 /* Info.plist */,
+				D7B712222AF5226A00424557 /* GoogleService-Info.plist */,
 			);
 			path = Remindify;
 			sourceTree = "<group>";
@@ -116,6 +125,11 @@
 			dependencies = (
 			);
 			name = Remindify;
+			packageProductDependencies = (
+				D7B7121A2AF51D2000424557 /* FirebaseAuth */,
+				D7B7121C2AF51D2000424557 /* FirebaseFirestore */,
+				D7B7121E2AF51D2000424557 /* FirebaseFirestoreSwift */,
+			);
 			productName = Remindify;
 			productReference = D7B711F92AF505E400424557 /* Remindify.app */;
 			productType = "com.apple.product-type.application";
@@ -144,6 +158,9 @@
 				Base,
 			);
 			mainGroup = D7B711F02AF505E400424557;
+			packageReferences = (
+				D7B712192AF51D2000424557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = D7B711FA2AF505E400424557 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -159,6 +176,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7B712092AF505E500424557 /* LaunchScreen.storyboard in Resources */,
+				D7B712232AF5226A00424557 /* GoogleService-Info.plist in Resources */,
 				D7B712062AF505E500424557 /* Assets.xcassets in Resources */,
 				D7B712042AF505E400424557 /* Main.storyboard in Resources */,
 			);
@@ -335,7 +353,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.fatima.Remindify;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iamfaatima.Remindify;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -362,7 +380,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.fatima.Remindify;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iamfaatima.Remindify;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -392,6 +410,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D7B712192AF51D2000424557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D7B7121A2AF51D2000424557 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D7B712192AF51D2000424557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		D7B7121C2AF51D2000424557 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D7B712192AF51D2000424557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		D7B7121E2AF51D2000424557 /* FirebaseFirestoreSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D7B712192AF51D2000424557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestoreSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D7B711F12AF505E400424557 /* Project object */;
 }

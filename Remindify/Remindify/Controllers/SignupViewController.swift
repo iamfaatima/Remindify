@@ -6,14 +6,61 @@
 //
 
 import UIKit
+import FirebaseCore
+import FirebaseAuth
 
 class SignupViewController: UIViewController {
 
+    @IBOutlet weak var nameTextField: UITextField!
+    @IBOutlet weak var emailTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var confirmPasswordTextField: UITextField!
+    @IBOutlet weak var warningTextField: UILabel!
     
     @IBAction func signupButtonPressed(_ sender: UIButton) {
-        //navigate to home/profile
-        let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
-        self.navigationController?.pushViewController(profileViewController, animated: true)
+        if let name = nameTextField.text, let email = emailTextField.text, let password = passwordTextField.text {
+               if password == confirmPasswordTextField.text {
+                   Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+                       if let error = error {
+                           print(error.localizedDescription)
+                           DispatchQueue.main.async {
+                               self.warningTextField.isHidden = false
+                               self.warningTextField.text = "\(error.localizedDescription)"
+                           }
+                       } else {
+                           // Successfully created the user, now save the user's name
+                           if let user = Auth.auth().currentUser {
+                               // Create a user profile change request
+                               let changeRequest = user.createProfileChangeRequest()
+                               changeRequest.displayName = name
+                               
+                               // Commit the changes to the user's profile
+                               changeRequest.commitChanges { error in
+                                   if let error = error {
+                                       DispatchQueue.main.async {
+                                           self.warningTextField.isHidden = false
+                                           self.warningTextField.text = "\(error.localizedDescription)"
+                                       }
+                                   } else {
+                                       DispatchQueue.main.async {
+                                           self.warningTextField.isHidden = false
+                                           self.warningTextField.text = "User profile updated successfully"
+                                           self.warningTextField.textColor = UIColor.green
+                                       }
+                                   }
+                               }
+                               
+                               // Navigate to home/profile
+                               let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+                               self.navigationController?.pushViewController(profileViewController, animated: true)
+                           }
+                       }
+                   }
+               } else {
+                   self.warningTextField.isHidden = false
+                   self.warningTextField.text = "Password and Confirm Password does not match"
+               }
+           }
     }
     
     @IBAction func accountExistsButtonPressed(_ sender: Any) {
@@ -24,7 +71,7 @@ class SignupViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        warningTextField.isHidden = true
     }
     
 

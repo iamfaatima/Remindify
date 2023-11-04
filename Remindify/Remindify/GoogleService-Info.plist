@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyByZ6FYEpDUKIcMmljpwARVKRtFKuPEW3c</string>
+	<key>GCM_SENDER_ID</key>
+	<string>507778570664</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.iamfaatima.Remindify</string>
+	<key>PROJECT_ID</key>
+	<string>remindify-8fc68</string>
+	<key>STORAGE_BUCKET</key>
+	<string>remindify-8fc68.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:507778570664:ios:56b86dab77bfc8a434a59d</string>
+</dict>
+</plist>
