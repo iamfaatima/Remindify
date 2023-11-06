@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		43778FF30978F9FE3ED8315E /* Pods_Remindify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06DB01B93FAC04BDE761FA73 /* Pods_Remindify.framework */; };
+		D716CCC72AF7D7010002FB7E /* HomeReminderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D716CCC62AF7D7010002FB7E /* HomeReminderTableViewController.swift */; };
+		D75250522AF8E6B600B6C264 /* ReminderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75250512AF8E6B600B6C264 /* ReminderModel.swift */; };
+		D75250542AF8EED600B6C264 /* AddReminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75250532AF8EED600B6C264 /* AddReminderViewController.swift */; };
 		D7B711FD2AF505E400424557 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B711FC2AF505E400424557 /* AppDelegate.swift */; };
 		D7B711FF2AF505E400424557 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B711FE2AF505E400424557 /* SceneDelegate.swift */; };
 		D7B712012AF505E400424557 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712002AF505E400424557 /* LoginViewController.swift */; };
@@ -16,13 +20,16 @@
 		D7B712142AF5091E00424557 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712132AF5091E00424557 /* SignupViewController.swift */; };
 		D7B712162AF5094E00424557 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712152AF5094E00424557 /* ProfileViewController.swift */; };
 		D7B712182AF5095F00424557 /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712172AF5095F00424557 /* PasswordViewController.swift */; };
-		D7B7121B2AF51D2000424557 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D7B7121A2AF51D2000424557 /* FirebaseAuth */; };
-		D7B7121D2AF51D2000424557 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D7B7121C2AF51D2000424557 /* FirebaseFirestore */; };
-		D7B7121F2AF51D2100424557 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D7B7121E2AF51D2000424557 /* FirebaseFirestoreSwift */; };
 		D7B712232AF5226A00424557 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D7B712222AF5226A00424557 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		06DB01B93FAC04BDE761FA73 /* Pods_Remindify.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Remindify.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		64CED0FED67C3C92370201E0 /* Pods-Remindify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Remindify.release.xcconfig"; path = "Target Support Files/Pods-Remindify/Pods-Remindify.release.xcconfig"; sourceTree = "<group>"; };
+		9682E0D6FC77C55789529C66 /* Pods-Remindify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Remindify.debug.xcconfig"; path = "Target Support Files/Pods-Remindify/Pods-Remindify.debug.xcconfig"; sourceTree = "<group>"; };
+		D716CCC62AF7D7010002FB7E /* HomeReminderTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeReminderTableViewController.swift; sourceTree = "<group>"; };
+		D75250512AF8E6B600B6C264 /* ReminderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderModel.swift; sourceTree = "<group>"; };
+		D75250532AF8EED600B6C264 /* AddReminderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReminderViewController.swift; sourceTree = "<group>"; };
 		D7B711F92AF505E400424557 /* Remindify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Remindify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B711FC2AF505E400424557 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D7B711FE2AF505E400424557 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -42,20 +49,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7B7121B2AF51D2000424557 /* FirebaseAuth in Frameworks */,
-				D7B7121D2AF51D2000424557 /* FirebaseFirestore in Frameworks */,
-				D7B7121F2AF51D2100424557 /* FirebaseFirestoreSwift in Frameworks */,
+				43778FF30978F9FE3ED8315E /* Pods_Remindify.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		62FF1BE2F4DBFC591D04EB88 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9682E0D6FC77C55789529C66 /* Pods-Remindify.debug.xcconfig */,
+				64CED0FED67C3C92370201E0 /* Pods-Remindify.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		BAF235DF05DF1804D2006AF4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				06DB01B93FAC04BDE761FA73 /* Pods_Remindify.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D7B711F02AF505E400424557 = {
 			isa = PBXGroup;
 			children = (
 				D7B711FB2AF505E400424557 /* Remindify */,
 				D7B711FA2AF505E400424557 /* Products */,
+				62FF1BE2F4DBFC591D04EB88 /* Pods */,
+				BAF235DF05DF1804D2006AF4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -90,6 +114,8 @@
 				D7B712132AF5091E00424557 /* SignupViewController.swift */,
 				D7B712152AF5094E00424557 /* ProfileViewController.swift */,
 				D7B712172AF5095F00424557 /* PasswordViewController.swift */,
+				D716CCC62AF7D7010002FB7E /* HomeReminderTableViewController.swift */,
+				D75250532AF8EED600B6C264 /* AddReminderViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -105,6 +131,7 @@
 		D7B712122AF5062300424557 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				D75250512AF8E6B600B6C264 /* ReminderModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -116,9 +143,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D7B7120D2AF505E500424557 /* Build configuration list for PBXNativeTarget "Remindify" */;
 			buildPhases = (
+				7D7BAD16588E6C1B1A059826 /* [CP] Check Pods Manifest.lock */,
 				D7B711F52AF505E400424557 /* Sources */,
 				D7B711F62AF505E400424557 /* Frameworks */,
 				D7B711F72AF505E400424557 /* Resources */,
+				BFFAB662B22C87B69BB4037E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -126,9 +155,6 @@
 			);
 			name = Remindify;
 			packageProductDependencies = (
-				D7B7121A2AF51D2000424557 /* FirebaseAuth */,
-				D7B7121C2AF51D2000424557 /* FirebaseFirestore */,
-				D7B7121E2AF51D2000424557 /* FirebaseFirestoreSwift */,
 			);
 			productName = Remindify;
 			productReference = D7B711F92AF505E400424557 /* Remindify.app */;
@@ -159,7 +185,6 @@
 			);
 			mainGroup = D7B711F02AF505E400424557;
 			packageReferences = (
-				D7B712192AF51D2000424557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = D7B711FA2AF505E400424557 /* Products */;
 			projectDirPath = "";
@@ -184,6 +209,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		7D7BAD16588E6C1B1A059826 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Remindify-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BFFAB662B22C87B69BB4037E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Remindify/Pods-Remindify-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Remindify/Pods-Remindify-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Remindify/Pods-Remindify-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		D7B711F52AF505E400424557 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -194,6 +261,9 @@
 				D7B712162AF5094E00424557 /* ProfileViewController.swift in Sources */,
 				D7B712142AF5091E00424557 /* SignupViewController.swift in Sources */,
 				D7B711FF2AF505E400424557 /* SceneDelegate.swift in Sources */,
+				D75250522AF8E6B600B6C264 /* ReminderModel.swift in Sources */,
+				D716CCC72AF7D7010002FB7E /* HomeReminderTableViewController.swift in Sources */,
+				D75250542AF8EED600B6C264 /* AddReminderViewController.swift in Sources */,
 				D7B712182AF5095F00424557 /* PasswordViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -336,6 +406,7 @@
 		};
 		D7B7120E2AF505E500424557 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9682E0D6FC77C55789529C66 /* Pods-Remindify.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -363,6 +434,7 @@
 		};
 		D7B7120F2AF505E500424557 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64CED0FED67C3C92370201E0 /* Pods-Remindify.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -410,35 +482,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		D7B712192AF51D2000424557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 9.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		D7B7121A2AF51D2000424557 /* FirebaseAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D7B712192AF51D2000424557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
-		};
-		D7B7121C2AF51D2000424557 /* FirebaseFirestore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D7B712192AF51D2000424557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestore;
-		};
-		D7B7121E2AF51D2000424557 /* FirebaseFirestoreSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D7B712192AF51D2000424557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestoreSwift;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D7B711F12AF505E400424557 /* Project object */;
 }

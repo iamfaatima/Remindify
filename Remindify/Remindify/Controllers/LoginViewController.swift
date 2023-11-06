@@ -5,11 +5,15 @@
 //
 
 import UIKit
-import FirebaseCore
 import FirebaseAuth
 
 class LoginViewController: UIViewController {
 
+    @IBAction func homeNavigation(_ sender: UIButton) {
+        //navigate to home
+        let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
+        self.navigationController?.pushViewController(homeViewController, animated: true)
+    }
     @IBOutlet weak var warningLabel: UILabel!
     @IBOutlet weak var emailTextField: UITextField!
     

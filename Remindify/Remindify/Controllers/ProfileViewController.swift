@@ -1,8 +1,13 @@
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
+import FirebaseCore
+import Firebase
+
 
 class ProfileViewController: UIViewController, UITextFieldDelegate {
 
+    
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var saveButton: UIButton!
@@ -122,3 +127,4 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         dismiss(animated: true, completion: nil)
     }
 }
+
