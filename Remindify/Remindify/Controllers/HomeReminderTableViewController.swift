@@ -6,13 +6,61 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 class HomeReminderTableViewController: UITableViewController {
     
-    let reminderArray = ["a", "b"]
+    let db = Firestore.firestore()
+    
+    var reminderArray = [ReminderModel(title: "a", description: "aa", date: "2/2/23"),
+                         ReminderModel(title: "b", description: "bb", date: "2/3/24")]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         addButton()
+        loadReminders()
+        tableView.dataSource = self
+        tableView.delegate = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("viewWillAppear")
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    func loadReminders(){
+        reminderArray = []
+            
+        db.collection("reminders").order(by: "Date").addSnapshotListener() { (querySnapshot, err) in
+          if let err = err {
+            print("Error getting documents: \(err)")
+          } else {
+              if let snapshotDocuments = querySnapshot?.documents{
+                  for document in snapshotDocuments {
+                   // print("\(document.documentID) => \(document.data())")
+                      let data = document.data()
+                      if let title = data["Title"] as? String{
+                          let newReminder = ReminderModel(title: title, description: data["Description"] as! String, date: data["Date"] as! String)
+                          self.reminderArray.append(newReminder)
+                          
+                          DispatchQueue.main.async {
+                              self.tableView.reloadData()
+                          }
+                      }
+                  }
+              }
+          }
+        }
     }
     
     func addButton(){
@@ -62,13 +110,13 @@ class HomeReminderTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
         
-        cell.textLabel?.text = reminderArray[indexPath.row]
+        cell.textLabel?.text = reminderArray[indexPath.row].title
         
         // Set the font for the title (left side) label
         cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         
         // Set the detail (right side) of the cell
-        cell.detailTextLabel?.text = "Reminders - 03/11/2023, 5:00 PM"
+        cell.detailTextLabel?.text = reminderArray[indexPath.row].date
         
         return cell
     }

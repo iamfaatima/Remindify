@@ -10,9 +10,9 @@ import FirebaseAuth
 class LoginViewController: UIViewController {
 
     @IBAction func homeNavigation(_ sender: UIButton) {
-        //navigate to home
-        let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
-        self.navigationController?.pushViewController(homeViewController, animated: true)
+        //navigate to profile
+        let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+        self.navigationController?.pushViewController(profileViewController, animated: true)
     }
     @IBOutlet weak var warningLabel: UILabel!
     @IBOutlet weak var emailTextField: UITextField!
@@ -41,9 +41,9 @@ class LoginViewController: UIViewController {
                 }
                 
             } else {
-                //navigate to profile
-                let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
-                self.navigationController?.pushViewController(profileViewController, animated: true)
+                //navigate to home
+                let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
+                self.navigationController?.pushViewController(homeViewController, animated: true)
             }
         }
         }else{

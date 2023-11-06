@@ -6,9 +6,12 @@
 //
 
 import UIKit
+import FirebaseFirestore
 import DateTimePicker
 
 class AddReminderViewController: UIViewController, DateTimePickerDelegate {
+    
+    let db = Firestore.firestore()
     
     @IBOutlet weak var warningLabel: UILabel!
     @IBOutlet weak var titleTextField: UITextField!
@@ -33,7 +36,7 @@ class AddReminderViewController: UIViewController, DateTimePickerDelegate {
         picker.completionHandler = { date in
                     let formatter = DateFormatter()
                     formatter.dateFormat = "hh:mm:ss aa dd/MM/YYYY"
-                    self.title = formatter.string(from: date)
+                    //self.title = formatter.string(from: date)
                 }
         picker.delegate = self
         picker.show()
@@ -57,9 +60,19 @@ class AddReminderViewController: UIViewController, DateTimePickerDelegate {
         reminder.description = descriptionTextField.text ?? ""
         reminder.date = selectedDate ?? ""
         
-        print(reminder.title)
-        print(reminder.description)
-        print(reminder.date)
+        if let title = reminder.title {
+            db.collection("reminders").addDocument(data: [
+              "Title": title,
+              "Description": reminder.description,
+              "Date": reminder.date
+            ]) { err in
+              if let err = err {
+                print("Error adding document: \(err)")
+              } else {
+                print("Document added with ID")
+              }
+            }
+        }
         
     }
     

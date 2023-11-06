@@ -50,9 +50,9 @@ class SignupViewController: UIViewController {
                                    }
                                }
                                
-                               // Navigate to home/profile
-                               let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
-                               self.navigationController?.pushViewController(profileViewController, animated: true)
+                               //navigate to home
+                               let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
+                               self.navigationController?.pushViewController(homeViewController, animated: true)
                            }
                        }
                    }
