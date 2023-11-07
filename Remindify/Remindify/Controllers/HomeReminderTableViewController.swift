@@ -12,8 +12,8 @@ class HomeReminderTableViewController: UITableViewController {
     
     let db = Firestore.firestore()
     
-    var reminderArray = [ReminderModel(title: "a", description: "aa", date: "2/2/23"),
-                         ReminderModel(title: "b", description: "bb", date: "2/3/24")]
+    var reminderArray = [ReminderModel(opened: false, title: "a", description: "aa", date: "2/2/23"),
+                         ReminderModel(opened: false, title: "b", description: "bb", date: "2/3/24")]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,13 +22,7 @@ class HomeReminderTableViewController: UITableViewController {
         tableView.dataSource = self
         tableView.delegate = self
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
+
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -96,66 +90,56 @@ class HomeReminderTableViewController: UITableViewController {
     
     // MARK: - Table view data source
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return reminderArray.count
-    }
-    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // Return the desired height for the cells
         return 65.0 // Adjust the value to the height you want
     }
     
-    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+            return reminderArray.count
+        }
+        
+        override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            if reminderArray[section].opened == true{
+                return 2
+            }else{
+                return 1
+            }
+        }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+            if indexPath.row == 0{
+                let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+                cell.textLabel?.text = reminderArray[indexPath.section].title
+                // Set the font for the title (left side) label
+                cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+                // Set the detail (right side) of the cell
+                cell.detailTextLabel?.text = reminderArray[indexPath.section].date
+                //cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+                return cell
+            }else{
+                //use different cell identifier if needed
+                let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+                cell.textLabel?.text = reminderArray[indexPath.section].description
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 15)
+                cell.detailTextLabel?.text = ""
+                //cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+                return cell
+            }
+        }
         
-        
-        cell.textLabel?.text = reminderArray[indexPath.row].title
-        
-        // Set the font for the title (left side) label
-        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        
-        // Set the detail (right side) of the cell
-        cell.detailTextLabel?.text = reminderArray[indexPath.row].date
-        
-        return cell
+        override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            if indexPath.row == 0{
+                if reminderArray[indexPath.section].opened == true{
+                    reminderArray[indexPath.section].opened = false
+                    let sections = IndexSet.init(integer: indexPath.section)
+                    tableView.reloadSections(sections, with: .none) //change this .none
+                }else{
+                    reminderArray[indexPath.section].opened = true
+                    let sections = IndexSet.init(integer: indexPath.section)
+                    tableView.reloadSections(sections, with: .none) //change this .none
+                }
+            }
+        }
+
+
     }
-    
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-    
-    /*
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
-    
-    
-}

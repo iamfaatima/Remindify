@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 struct ReminderModel{
+    var opened : Bool = false
     var title : String?
     var description : String?
     var date : String?
