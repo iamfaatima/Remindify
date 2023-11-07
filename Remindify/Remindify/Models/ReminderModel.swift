@@ -13,5 +13,7 @@ struct ReminderModel{
     var title : String?
     var description : String?
     var date : String?
+    var documentID : String? //see if it can be removed
+    var ownerId : String? 
     //alarm
 }

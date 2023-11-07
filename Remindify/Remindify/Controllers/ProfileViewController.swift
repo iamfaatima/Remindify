@@ -77,6 +77,9 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        
         activityIndicator.isHidden = true
         warningLabel.isHidden = true
         nameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)

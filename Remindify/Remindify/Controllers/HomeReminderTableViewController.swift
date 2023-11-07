@@ -8,13 +8,14 @@
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
+import SwipeCellKit
 
 class HomeReminderTableViewController: UITableViewController {
     
     let db = Firestore.firestore()
     
-    var reminderArray = [ReminderModel(opened: false, title: "a", description: "aa", date: "2/2/23"),
-                         ReminderModel(opened: false, title: "b", description: "bb", date: "2/3/24")]
+    var reminderArray = [ReminderModel(opened: false, title: "a", description: "aa", date: "2/2/23",documentID: nil, ownerId: nil),
+                         ReminderModel(opened: false, title: "b", description: "bb", date: "2/3/24", documentID: nil, ownerId: nil)]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,30 +71,43 @@ class HomeReminderTableViewController: UITableViewController {
         self.navigationController?.pushViewController(profileViewController, animated: true)
     }
 
-    func loadReminders(){
+    func loadReminders() {
         reminderArray = []
-            
-        db.collection("reminders").order(by: "Date").addSnapshotListener() { (querySnapshot, err) in
-          if let err = err {
-            print("Error getting documents: \(err)")
-          } else {
-              if let snapshotDocuments = querySnapshot?.documents{
-                  for document in snapshotDocuments {
-                   // print("\(document.documentID) => \(document.data())")
-                      let data = document.data()
-                      if let title = data["Title"] as? String{
-                          let newReminder = ReminderModel(title: title, description: data["Description"] as! String, date: data["Date"] as! String)
-                          self.reminderArray.append(newReminder)
-                          
-                          DispatchQueue.main.async {
-                              self.tableView.reloadData()
-                          }
-                      }
-                  }
-              }
-          }
+
+        if let user = Auth.auth().currentUser {
+            let ownerId = user.uid  // Get the current user's UID
+
+            db.collection("reminders")
+                .whereField("ownerId", isEqualTo: ownerId)  // Filter reminders by owner ID
+                .order(by: "Date")
+                .addSnapshotListener { (querySnapshot, err) in
+                    if let err = err {
+                        print("Error getting documents: \(err)")
+                    } else {
+                        if let snapshotDocuments = querySnapshot?.documents {
+                            for document in snapshotDocuments {
+                                let data = document.data()
+                                if let title = data["Title"] as? String {
+                                    let documentID = document.documentID // Retrieve the Firestore document ID
+                                    let newReminder = ReminderModel(
+                                        title: title,
+                                        description: data["Description"] as! String,
+                                        date: data["Date"] as! String,
+                                        documentID: documentID, ownerId: ownerId
+                                    )
+                                    self.reminderArray.append(newReminder)
+
+                                    DispatchQueue.main.async {
+                                        self.tableView.reloadData()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
         }
     }
+
     
     func addButton(){
         // Create a UIButton with an "add" symbol
@@ -146,7 +160,8 @@ class HomeReminderTableViewController: UITableViewController {
         }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             if indexPath.row == 0{
-                let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SwipeTableViewCell
+                cell.delegate = self
                 cell.textLabel?.text = reminderArray[indexPath.section].title
                 // Set the font for the title (left side) label
                 cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
@@ -156,11 +171,12 @@ class HomeReminderTableViewController: UITableViewController {
                 return cell
             }else{
                 //use different cell identifier if needed
-                let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SwipeTableViewCell
                 cell.textLabel?.text = reminderArray[indexPath.section].description
                 cell.textLabel?.font = UIFont.systemFont(ofSize: 15)
                 cell.detailTextLabel?.text = ""
                 //cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+                cell.delegate = self
                 return cell
             }
         }
@@ -178,20 +194,88 @@ class HomeReminderTableViewController: UITableViewController {
                 }
             }
         }
-        
-//        override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//            return section == 0 ? .leastNonzeroMagnitude : 20 // Hide the header for the first section
-//        }
-
-//        override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//            if section == 0 {
-//                return nil // Return nil for the first section to hide the header
-//            } else {
-//                let separatorView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 0))
-//                separatorView.backgroundColor = .clear // Set the color of the separator line
-//                return separatorView
-//            }
-//        }
-
 
     }
+
+extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            // Get the reminder to delete
+            let reminder = self.reminderArray[indexPath.section]
+            print("reminder: \(reminder)")
+            print("\(reminder.documentID!)")
+            // Delete the reminder from Firestore
+            self.deleteReminderFromFirestore(reminder.documentID!) { success in //ERROR: Cannot convert value of type 'ReminderModel' to expected argument type 'String'
+                if success {
+                    print("success")
+//                    // Update the table view with animation
+//                    tableView.deleteSections(IndexSet(arrayLiteral: indexPath.section), with: .automatic)
+//
+//                    // Remove the reminder from your local array
+//                    self.reminderArray.remove(at: indexPath.section)
+                } else {
+                    // Handle the delete error if necessary
+                    print("Error deleting reminder from Firestore")
+                }
+            }
+        }
+
+        // Customize the action appearance
+        deleteAction.image = UIImage(named: "Trash")
+
+        return [deleteAction]
+    }
+
+
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+        options.expansionStyle = .destructive
+        return options
+    }
+
+    // Function to delete a reminder from Firestore
+    // Function to delete a reminder from Firestore
+    func deleteReminderFromFirestore(_ reminderDocumentID: String, completion: @escaping (Bool) -> Void) {
+        if let user = Auth.auth().currentUser {
+            let ownerId = user.uid  // Get the current user's UID
+
+            let db = Firestore.firestore()
+            let remindersCollection = db.collection("reminders")
+            
+            // Reference to the specific reminder document using its auto-generated ID
+            let reminderDocRef = remindersCollection.document(reminderDocumentID)
+
+            // Get the document data to check if the reminder belongs to the current user
+            reminderDocRef.getDocument { (document, error) in
+                if let error = error {
+                    print("Error getting reminder document: \(error.localizedDescription)")
+                    completion(false)
+                } else if let data = document?.data(), let documentOwnerId = data["ownerId"] as? String {
+                    if documentOwnerId == ownerId {
+                        // The reminder belongs to the current user, so it can be deleted
+                        reminderDocRef.delete { error in
+                            if let error = error {
+                                print("Error deleting reminder from Firestore: \(error.localizedDescription)")
+                                completion(false)
+                            } else {
+                                print("Reminder deleted from Firestore")
+                                completion(true)
+                            }
+                        }
+                    } else {
+                        print("Reminder does not belong to the current user")
+                        completion(false)
+                    }
+                } else {
+                    print("Reminder data is missing or ownerId is not a string")
+                    completion(false)
+                }
+            }
+        }
+    }
+
+
+}
