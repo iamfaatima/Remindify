@@ -21,6 +21,7 @@ class HomeReminderTableViewController: UITableViewController {
         loadReminders()
         tableView.dataSource = self
         tableView.delegate = self
+        //tableView.separatorStyle = .singleLineEtched
     }
 
     
@@ -140,6 +141,20 @@ class HomeReminderTableViewController: UITableViewController {
                 }
             }
         }
+        
+//        override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//            return section == 0 ? .leastNonzeroMagnitude : 20 // Hide the header for the first section
+//        }
+
+//        override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//            if section == 0 {
+//                return nil // Return nil for the first section to hide the header
+//            } else {
+//                let separatorView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 0))
+//                separatorView.backgroundColor = .clear // Set the color of the separator line
+//                return separatorView
+//            }
+//        }
 
 
     }
