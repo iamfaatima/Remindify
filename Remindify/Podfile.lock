@@ -308,14 +308,16 @@ PODS:
   - nanopb/decode (1.30906.0)
   - nanopb/encode (1.30906.0)
   - PromisesObjC (1.2.12)
-  - YNExpandableCell (1.2.1)
+  - SDWebImage (5.18.3):
+    - SDWebImage/Core (= 5.18.3)
+  - SDWebImage/Core (5.18.3)
 
 DEPENDENCIES:
   - DateTimePicker
   - Firebase/Auth
   - Firebase/Firestore
   - Firebase/Storage
-  - YNExpandableCell
+  - SDWebImage (~> 5.0)
 
 SPEC REPOS:
   trunk:
@@ -336,7 +338,7 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - PromisesObjC
-    - YNExpandableCell
+    - SDWebImage
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
@@ -356,8 +358,8 @@ SPEC CHECKSUMS:
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
-  YNExpandableCell: f71457eddc5f2d607de5a2aef545325b0b7622e4
+  SDWebImage: 96e0c18ef14010b7485210e92fac888587ebb958
 
-PODFILE CHECKSUM: e9533597daad96adf63a67b8b3795a4096dedd9e
+PODFILE CHECKSUM: 3b47d8bb2ad844ea22141002669b5a99905454f3
 
 COCOAPODS: 1.13.0

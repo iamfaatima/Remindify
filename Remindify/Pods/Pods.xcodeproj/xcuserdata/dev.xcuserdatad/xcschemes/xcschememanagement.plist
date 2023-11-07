@@ -102,7 +102,7 @@
 			<key>orderHint</key>
 			<integer>19</integer>
 		</dict>
-		<key>YNExpandableCell.xcscheme</key>
+		<key>SDWebImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

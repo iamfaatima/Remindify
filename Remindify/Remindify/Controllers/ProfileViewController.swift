@@ -4,10 +4,11 @@ import FirebaseFirestore
 import FirebaseCore
 import Firebase
 import FirebaseStorage
+import SDWebImage
 
 class ProfileViewController: UIViewController, UITextFieldDelegate {
 
-    
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var saveButton: UIButton!
@@ -76,14 +77,10 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        activityIndicator.isHidden = true
         warningLabel.isHidden = true
-        
         nameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        
-        // Disable the save button initially
         saveButton.isEnabled = false
-
         emailTextField.isUserInteractionEnabled = false
         emailTextField.isEnabled = false
         emailTextField.textColor = .gray
@@ -94,14 +91,31 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
             let userEmail = user.email
             emailTextField.text = userEmail
             nameTextField.text = userName
+
+            loadProfileImage()
+
+            // Make the profileImageView rounded
+            profileImageView.frame = CGRect(x: 140, y: 180, width: 120, height: 120)
+            profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
+            profileImageView.clipsToBounds = true
+            // Ensure that the aspect ratio of the image is maintained
+            profileImageView.contentMode = .scaleAspectFill
+            profileImageView.image = UIImage(imageLiteralResourceName: "Profile")
         }
-        
-        // Make the profileImageView rounded
-        
-           profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
-           profileImageView.clipsToBounds = true
-        profileImageView.image = UIImage(imageLiteralResourceName: "Profile")
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        loadProfileImage()
+    }
+
+    func loadProfileImage() {
+        if let user = Auth.auth().currentUser, let photoURL = user.photoURL {
+            profileImageView.sd_setImage(with: photoURL, placeholderImage: UIImage(named: "Profile"))
+        }
+    }
+
     
     @objc func textFieldDidChange(_ textField: UITextField) {
         // Enable the save button when the name text field is edited
@@ -126,31 +140,59 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let pickedImage = info[.editedImage] as? UIImage {
-            // Get a reference to Firebase Storage
-            let storage = Storage.storage()
+            // Show a loading indicator
+            activityIndicator.color = UIColor.darkGray
+            activityIndicator.isHidden = false
+            activityIndicator.center = self.view.center
+            activityIndicator.startAnimating()
+            self.view.addSubview(activityIndicator)
 
-            // Create a reference to the path where you want to upload the image
+            // Upload the image to Firebase Storage
+            let storage = Storage.storage()
             let storageRef = storage.reference().child("images/\(UUID().uuidString).jpg")
 
             if let imageData = pickedImage.jpegData(compressionQuality: 0.8) {
-                // Upload the image data to Firebase Storage
                 let uploadTask = storageRef.putData(imageData, metadata: nil) { (metadata, error) in
+                    // Remove the loading indicator
+                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.removeFromSuperview()
+
                     guard error == nil else {
                         // Handle the error
                         print("Error uploading image: \(error!.localizedDescription)")
                         return
                     }
-                    
+
                     // Image uploaded successfully
                     print("Image uploaded to Firebase Storage")
-                    DispatchQueue.main.async {
-                        self.profileImageView.image = pickedImage
-                    }
-                    
-                    // You can also get the download URL of the uploaded image
+
+                    // Show a loading indicator while retrieving the download URL
+                    let loadingLabel = UILabel()
+                    loadingLabel.text = "Loading..."
+                    loadingLabel.center = self.view.center
+                    self.view.addSubview(loadingLabel)
+
+                    // Get the download URL
                     storageRef.downloadURL { (url, error) in
+                        // Remove the loading label
+                        loadingLabel.removeFromSuperview()
+
                         if let downloadURL = url {
-                            print("Download URL: \(downloadURL.absoluteString)")
+                            if let user = Auth.auth().currentUser {
+                                // Set the user's photoURL
+                                let changeRequest = user.createProfileChangeRequest()
+                                changeRequest.photoURL = downloadURL
+                                changeRequest.commitChanges { error in
+                                    if let error = error {
+                                        print("Error setting photoURL: \(error.localizedDescription)")
+                                    } else {
+                                        print("photoURL set in Firebase Authentication profile")
+
+                                        // Use SDWebImage to display the image
+                                        self.profileImageView.sd_setImage(with: downloadURL, placeholderImage: pickedImage)
+                                    }
+                                }
+                            }
                         }
                     }
                 }

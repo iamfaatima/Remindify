@@ -149,7 +149,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZqI-Bw-0Xr">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZqI-Bw-0Xr">
                                 <rect key="frame" x="77" y="172" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
@@ -199,11 +199,16 @@
                                     <action selector="changeImageButtonPressed:" destination="yeM-ft-uUH" eventType="touchUpInside" id="8zl-P8-omI"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="PS3-tj-zhM">
+                                <rect key="frame" x="75" y="173" width="242" height="123"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="W2S-M1-8uQ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="PS3-tj-zhM" id="JrL-Te-erC"/>
                         <outlet property="emailTextField" destination="tT3-2J-S0U" id="dJ7-wp-Fbw"/>
                         <outlet property="nameTextField" destination="Jn3-35-ohf" id="bs1-nz-wMH"/>
                         <outlet property="profileImageView" destination="ZqI-Bw-0Xr" id="pY0-H6-9gx"/>

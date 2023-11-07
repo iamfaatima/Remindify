@@ -33,6 +33,7 @@ class SignupViewController: UIViewController {
                                // Create a user profile change request
                                let changeRequest = user.createProfileChangeRequest()
                                changeRequest.displayName = name
+                               changeRequest.photoURL = nil
                                
                                // Commit the changes to the user's profile
                                changeRequest.commitChanges { error in

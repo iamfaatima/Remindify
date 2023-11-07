@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseFirestore
+import FirebaseAuth
 
 class HomeReminderTableViewController: UITableViewController {
     
@@ -36,9 +37,16 @@ class HomeReminderTableViewController: UITableViewController {
         }
     }
     
-    func addProfileButton(){
+    func addProfileButton() {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: "Profile"), for: .normal) // Replace "YourImageName" with your image asset name
+
+        // Load the user's photoURL and set it as the button's background image
+        if let user = Auth.auth().currentUser, let photoURL = user.photoURL {
+            button.sd_setBackgroundImage(with: photoURL, for: .normal, placeholderImage: UIImage(named: "Profile"))
+        } else {
+            // Use a default image if the user doesn't have a photoURL
+            button.setImage(UIImage(named: "Profile"), for: .normal)
+        }
 
         // Set the button's frame to position it in the top-right corner
         button.frame = CGRect(x: tableView.frame.width - 100, y: 0, width: 80, height: 80)
@@ -48,15 +56,14 @@ class HomeReminderTableViewController: UITableViewController {
 
         button.layer.cornerRadius = button.frame.height / 2
         button.layer.masksToBounds = true
-        
+
         // Make sure the button is added on top of the table view.
         view.bringSubviewToFront(button)
-        
+
         // Add the button as a subview to your view controller's view
         view.addSubview(button)
-
     }
-    
+
     @objc func profileButtonTapped() {
         //navigate to profile
         let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
