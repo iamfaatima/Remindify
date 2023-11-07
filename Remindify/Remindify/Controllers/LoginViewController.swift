@@ -9,11 +9,6 @@ import FirebaseAuth
 
 class LoginViewController: UIViewController {
 
-    @IBAction func homeNavigation(_ sender: UIButton) {
-        //navigate to profile
-        let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
-        self.navigationController?.pushViewController(profileViewController, animated: true)
-    }
     @IBOutlet weak var warningLabel: UILabel!
     @IBOutlet weak var emailTextField: UITextField!
     

@@ -3,7 +3,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import FirebaseCore
 import Firebase
-
+import FirebaseStorage
 
 class ProfileViewController: UIViewController, UITextFieldDelegate {
 
@@ -97,6 +97,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
         }
         
         // Make the profileImageView rounded
+        
            profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
            profileImageView.clipsToBounds = true
         profileImageView.image = UIImage(imageLiteralResourceName: "Profile")
@@ -116,12 +117,48 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
 }
 
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+//        if let pickedImage = info[.editedImage] as? UIImage {
+//            profileImageView.image = pickedImage
+//        }
+//        dismiss(animated: true, completion: nil)
+//    }
+
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let pickedImage = info[.editedImage] as? UIImage {
-            profileImageView.image = pickedImage
+            // Get a reference to Firebase Storage
+            let storage = Storage.storage()
+
+            // Create a reference to the path where you want to upload the image
+            let storageRef = storage.reference().child("images/\(UUID().uuidString).jpg")
+
+            if let imageData = pickedImage.jpegData(compressionQuality: 0.8) {
+                // Upload the image data to Firebase Storage
+                let uploadTask = storageRef.putData(imageData, metadata: nil) { (metadata, error) in
+                    guard error == nil else {
+                        // Handle the error
+                        print("Error uploading image: \(error!.localizedDescription)")
+                        return
+                    }
+                    
+                    // Image uploaded successfully
+                    print("Image uploaded to Firebase Storage")
+                    DispatchQueue.main.async {
+                        self.profileImageView.image = pickedImage
+                    }
+                    
+                    // You can also get the download URL of the uploaded image
+                    storageRef.downloadURL { (url, error) in
+                        if let downloadURL = url {
+                            print("Download URL: \(downloadURL.absoluteString)")
+                        }
+                    }
+                }
+            }
         }
         dismiss(animated: true, completion: nil)
     }
+
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)

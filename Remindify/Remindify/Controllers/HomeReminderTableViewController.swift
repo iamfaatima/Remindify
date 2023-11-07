@@ -18,10 +18,13 @@ class HomeReminderTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         addButton()
+        addProfileButton()
         loadReminders()
         tableView.dataSource = self
         tableView.delegate = self
         //tableView.separatorStyle = .singleLineEtched
+        self.title = "Remindify"
+        
     }
 
     
@@ -33,6 +36,33 @@ class HomeReminderTableViewController: UITableViewController {
         }
     }
     
+    func addProfileButton(){
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(named: "Profile"), for: .normal) // Replace "YourImageName" with your image asset name
+
+        // Set the button's frame to position it in the top-right corner
+        button.frame = CGRect(x: tableView.frame.width - 100, y: 0, width: 80, height: 80)
+
+        // Add a target for the button to handle the button tap action
+        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
+
+        button.layer.cornerRadius = button.frame.height / 2
+        button.layer.masksToBounds = true
+        
+        // Make sure the button is added on top of the table view.
+        view.bringSubviewToFront(button)
+        
+        // Add the button as a subview to your view controller's view
+        view.addSubview(button)
+
+    }
+    
+    @objc func profileButtonTapped() {
+        //navigate to profile
+        let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+        self.navigationController?.pushViewController(profileViewController, animated: true)
+    }
+
     func loadReminders(){
         reminderArray = []
             
