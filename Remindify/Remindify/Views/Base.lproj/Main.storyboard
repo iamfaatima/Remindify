@@ -107,6 +107,8 @@
                     </view>
                     <connections>
                         <outlet property="activityIndicator" destination="PS3-tj-zhM" id="JrL-Te-erC"/>
+                        <outlet property="changeImageButton" destination="EXx-Yg-twn" id="Lqb-a3-xdn"/>
+                        <outlet property="changePassword" destination="h3i-EN-h4d" id="qjU-RX-QS4"/>
                         <outlet property="emailTextField" destination="tT3-2J-S0U" id="dJ7-wp-Fbw"/>
                         <outlet property="nameTextField" destination="Jn3-35-ohf" id="bs1-nz-wMH"/>
                         <outlet property="profileImageView" destination="ZqI-Bw-0Xr" id="pY0-H6-9gx"/>
@@ -126,43 +128,58 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Old Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0yY-sd-v0F">
-                                <rect key="frame" x="59" y="107" width="218" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="New Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="FNV-Sz-jEm">
-                                <rect key="frame" x="59" y="190" width="216" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jp0-DO-yJO">
-                                <rect key="frame" x="133" y="382" width="133" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Save Changes"/>
-                                <connections>
-                                    <action selector="saveChangesButtonPressed:" destination="H6N-gN-EcQ" eventType="touchUpInside" id="Vwd-xb-HKZ"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Password and Confirm Password does not match" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="adq-3p-MHU">
-                                <rect key="frame" x="66" y="440" width="264" height="46"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
-                                <color key="textColor" systemColor="systemRedColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirm New Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="4XF-VQ-0nY">
-                                <rect key="frame" x="57" y="272" width="210" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
+                            <stackView opaque="NO" contentMode="scaleAspectFit" axis="vertical" distribution="fillProportionally" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="oh5-dG-99i">
+                                <rect key="frame" x="10" y="84" width="373" height="732"/>
+                                <subviews>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Old Password" textAlignment="natural" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="0yY-sd-v0F">
+                                        <rect key="frame" x="0.0" y="0.0" width="373" height="56"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="0yY-sd-v0F" secondAttribute="height" multiplier="400:60" id="IKL-zX-rNy"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="New Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="FNV-Sz-jEm">
+                                        <rect key="frame" x="0.0" y="96" width="373" height="56"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="FNV-Sz-jEm" secondAttribute="height" multiplier="400:60" id="fHR-o3-37n"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirm New Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="4XF-VQ-0nY">
+                                        <rect key="frame" x="0.0" y="192" width="373" height="56"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="4XF-VQ-0nY" secondAttribute="height" multiplier="400:60" id="Isu-tQ-MzQ"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jp0-DO-yJO">
+                                        <rect key="frame" x="0.0" y="288" width="373" height="78.333333333333314"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="Save Changes"/>
+                                        <connections>
+                                            <action selector="saveChangesButtonPressed:" destination="H6N-gN-EcQ" eventType="touchUpInside" id="Vwd-xb-HKZ"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Password and Confirm Password does not match" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="adq-3p-MHU">
+                                        <rect key="frame" x="0.0" y="406.33333333333326" width="373" height="325.66666666666674"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                        <color key="textColor" systemColor="systemRedColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="pBV-qf-KB8"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="pBV-qf-KB8" firstAttribute="trailing" secondItem="oh5-dG-99i" secondAttribute="trailing" constant="10" id="H89-j1-tTc"/>
+                            <constraint firstItem="oh5-dG-99i" firstAttribute="leading" secondItem="pBV-qf-KB8" secondAttribute="leading" constant="10" id="Oxb-nw-BhD"/>
+                            <constraint firstItem="oh5-dG-99i" firstAttribute="top" secondItem="pBV-qf-KB8" secondAttribute="top" constant="25" id="WeY-SY-nJY"/>
+                            <constraint firstItem="pBV-qf-KB8" firstAttribute="bottom" secondItem="oh5-dG-99i" secondAttribute="bottom" constant="2" id="cjx-o0-d7B"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="confirmPasswordTextField" destination="4XF-VQ-0nY" id="GqV-FF-mB7"/>
@@ -242,13 +259,13 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Description" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="crI-Ws-S9K">
-                                <rect key="frame" x="59" y="173" width="97" height="34"/>
+                                <rect key="frame" x="59" y="186" width="97" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9vY-eI-iRh">
-                                <rect key="frame" x="34" y="248" width="198" height="35"/>
+                                <rect key="frame" x="31" y="252" width="198" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Choose Date and Time"/>
@@ -257,14 +274,14 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="63O-Hq-Ao2">
-                                <rect key="frame" x="62" y="148" width="232" height="21"/>
+                                <rect key="frame" x="62" y="157" width="185" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" systemColor="systemRedColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Qh-cb-ZXg">
-                                <rect key="frame" x="275" y="148" width="61" height="35"/>
+                                <rect key="frame" x="161" y="358" width="61" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Save"/>

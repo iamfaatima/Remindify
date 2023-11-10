@@ -22,6 +22,7 @@ class HomeReminderTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         addButton()
+        addProfileButton()
         loadReminders()
         tableView.dataSource = self
         tableView.delegate = self
@@ -222,3 +223,82 @@ extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
   
 }
 
+extension HomeReminderTableViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            // If the search text is empty, reload all items
+            loadReminders()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        } else {
+            // Perform a Firestore query to get items that match the search text
+            let query = db.collection("items")
+                .whereField("title", isGreaterThanOrEqualTo: searchText)
+                .whereField("title", isLessThan: searchText + "z")  // This assumes a case-insensitive search
+
+            query.addSnapshotListener { (querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                } else {
+                    if let documents = querySnapshot?.documents {
+                        // Map Firestore documents to your ReminderModel
+                        let filteredItems = documents.compactMap { document -> ReminderModel? in
+                            let data = document.data()
+                            guard let title = data["title"] as? String,
+                                  let dateCreated = data["dateCreated"] as? Timestamp else {
+                                return nil
+                            }
+                            let reminder = ReminderModel(title: title)
+                            return reminder
+                        }
+                        self.reminderArray = filteredItems
+                        self.tableView.reloadData()
+                    }
+                }
+            }
+        }
+    }
+    
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        // Allow editing and return true
+        return true
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        // Handle actions when the search bar begins editing (optional)
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // Handle actions when the search button is clicked (optional)
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        // Handle actions when the cancel button is clicked
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+//        displayArray = reminderArray
+//        tableView.reloadData()
+        loadReminders()
+    }
+    
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        // Allow ending editing and return true
+        return true
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        // Handle actions when the search bar ends editing (optional)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        // Handle text changes in the search bar (optional)
+        return true
+    }
+    
+    // Handle tap gesture to resign search bar when the user clicks anywhere else on the screen
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        searchBar.resignFirstResponder()
+//    }
+}

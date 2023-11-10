@@ -14,6 +14,8 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var warningLabel: UILabel!
     @IBOutlet weak var profileImageView: UIImageView!
+    @IBOutlet weak var changeImageButton: UIButton!
+    @IBOutlet weak var changePassword: UIButton!
     
     @IBAction func changeImageButtonPressed(_ sender: UIButton) {
         let imagePicker = UIImagePickerController()
@@ -109,7 +111,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        setupUI()
         loadProfileImage()
     }
 
@@ -129,6 +131,60 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
         // Navigate to home/profile
         let passwordViewController = self.storyboard?.instantiateViewController(withIdentifier: "PasswordViewController") as! PasswordViewController
         self.navigationController?.pushViewController(passwordViewController, animated: true)
+    }
+    
+    func setUpImageViewConstraints() {
+      profileImageView.translatesAutoresizingMaskIntoConstraints = false
+      profileImageView.heightAnchor.constraint(equalToConstant: 160).isActive = true
+      profileImageView.widthAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
+      profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+      profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 70).isActive = true
+  }
+
+   func setUpChangeImageConstraints() {
+      changeImageButton.translatesAutoresizingMaskIntoConstraints = false
+      changeImageButton.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 60).isActive = true
+      changeImageButton.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 16).isActive = true
+  }
+
+  func setUpNameTextFieldConstraints() {
+      nameTextField.translatesAutoresizingMaskIntoConstraints = false
+      nameTextField.heightAnchor.constraint(equalToConstant: 37).isActive = true
+      nameTextField.widthAnchor.constraint(equalToConstant: 207).isActive = true
+      nameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+      nameTextField.topAnchor.constraint(equalTo: changeImageButton.bottomAnchor, constant: 38.8).isActive = true
+  }
+
+  func setUpWarningLabelConstraints() {
+      warningLabel.translatesAutoresizingMaskIntoConstraints = false
+      warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+      warningLabel.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 8).isActive = true
+      warningLabel.adjustsFontSizeToFitWidth = true
+  }
+
+  func setUpEmailTextFieldConstraints() {
+      emailTextField.translatesAutoresizingMaskIntoConstraints = false
+      emailTextField.heightAnchor.constraint(equalToConstant: 37).isActive = true
+      emailTextField.widthAnchor.constraint(equalToConstant: 206).isActive = true
+      emailTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+      emailTextField.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 38.8).isActive = true
+  }
+
+  func setUpPasswordButtonConstraints() {
+      changePassword.translatesAutoresizingMaskIntoConstraints = false
+      changePassword.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 60).isActive = true
+      changePassword.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 16).isActive = true
+  }
+
+
+    
+    func setupUI(){
+        setUpImageViewConstraints()
+        setUpChangeImageConstraints()
+        setUpNameTextFieldConstraints()
+        setUpWarningLabelConstraints()
+        setUpEmailTextFieldConstraints()
+        setUpPasswordButtonConstraints()
     }
     
 }

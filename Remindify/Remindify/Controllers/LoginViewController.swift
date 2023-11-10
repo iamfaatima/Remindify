@@ -208,17 +208,8 @@ final class LoginViewController: UIViewController, UITextFieldDelegate {
         warningLabel.translatesAutoresizingMaskIntoConstraints = false
         warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         warningLabel.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 8).isActive = true
-        
-        // Adjust the width and height constraints
-        let labelWidth: CGFloat = 100 // Adjust the width as needed
-        let labelHeight: CGFloat = 10 // Adjust the height as needed
-        
         warningLabel.adjustsFontSizeToFitWidth = true
-        
-        
     }
-
-
 
       func setUpLoginButtonConstraints() {
         loginButton.translatesAutoresizingMaskIntoConstraints = false
