@@ -15,20 +15,24 @@ class HomeReminderTableViewController: UITableViewController {
     let db = Firestore.firestore()
     
     var reminderArray = [ReminderModel(opened: false, title: "a", description: "aa", date: "2/2/23",documentID: nil, ownerId: nil),
-                         ReminderModel(opened: false, title: "b", description: "bb", date: "2/3/24", documentID: nil, ownerId: nil)]
+                             ReminderModel(opened: false, title: "b", description: "bb", date: "2/3/24", documentID: nil, ownerId: nil)]
+    
+    var displayArray = [ReminderModel]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         addButton()
-        addProfileButton()
         loadReminders()
         tableView.dataSource = self
         tableView.delegate = self
-        //tableView.separatorStyle = .singleLineEtched
-        self.title = "Remindify"
-        
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -36,39 +40,6 @@ class HomeReminderTableViewController: UITableViewController {
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
-    }
-    
-    func addProfileButton() {
-        let button = UIButton(type: .custom)
-        
-        // Load the user's photoURL and set it as the button's background image
-        if let user = Auth.auth().currentUser, let photoURL = user.photoURL {
-            button.sd_setBackgroundImage(with: photoURL, for: .normal, placeholderImage: UIImage(named: "Profile"))
-        } else {
-            // Use a default image if the user doesn't have a photoURL
-            button.setImage(UIImage(named: "Profile"), for: .normal)
-        }
-        
-        // Set the button's frame to position it in the top-right corner
-        button.frame = CGRect(x: tableView.frame.width - 100, y: 0, width: 80, height: 80)
-        
-        // Add a target for the button to handle the button tap action
-        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
-        
-        button.layer.cornerRadius = button.frame.height / 2
-        button.layer.masksToBounds = true
-        
-        // Make sure the button is added on top of the table view.
-        view.bringSubviewToFront(button)
-        
-        // Add the button as a subview to your view controller's view
-        view.addSubview(button)
-    }
-    
-    @objc func profileButtonTapped() {
-        //navigate to profile
-        let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
-        self.navigationController?.pushViewController(profileViewController, animated: true)
     }
     
     func loadReminders() {
@@ -106,8 +77,8 @@ class HomeReminderTableViewController: UITableViewController {
                     }
                 }
         }
+        self.tableView.reloadData()
     }
-    
     
     func addButton(){
         // Create a UIButton with an "add" symbol
@@ -140,31 +111,67 @@ class HomeReminderTableViewController: UITableViewController {
         self.navigationController?.pushViewController(addReminderViewController, animated: true)
     }
     
+    //MARK: - Profile Button
+    
+    func addProfileButton() {
+        let button = UIButton(type: .custom)
+        
+        // Load the user's photoURL and set it as the button's background image
+        if let user = Auth.auth().currentUser, let photoURL = user.photoURL {
+            button.sd_setBackgroundImage(with: photoURL, for: .normal, placeholderImage: UIImage(named: "Profile"))
+        } else {
+            // Use a default image if the user doesn't have a photoURL
+            button.setImage(UIImage(named: "Profile"), for: .normal)
+        }
+        
+        // Set the button's frame to position it in the top-right corner
+        button.frame = CGRect(x: tableView.frame.width - 100, y: 0, width: 80, height: 80)
+        
+        // Add a target for the button to handle the button tap action
+        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
+        
+        button.layer.cornerRadius = button.frame.height / 2
+        button.layer.masksToBounds = true
+        
+        // Make sure the button is added on top of the table view.
+        view.bringSubviewToFront(button)
+        
+        // Add the button as a subview to your view controller's view
+        view.addSubview(button)
+    }
+    
+    @objc func profileButtonTapped() {
+        //navigate to profile
+        let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+        self.navigationController?.pushViewController(profileViewController, animated: true)
+    }
+
+    
     // MARK: - Table view data source
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return reminderArray.count ?? 1
+    }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // Return the desired height for the cells
         return 65.0 // Adjust the value to the height you want
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return reminderArray.count
-    }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SwipeTableViewCell
+        
         cell.delegate = self
         cell.textLabel?.text = reminderArray[indexPath.row].title
+        
         // Set the font for the title (left side) label
         cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        
         // Set the detail (right side) of the cell
         cell.detailTextLabel?.text = reminderArray[indexPath.row].date
-        //cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        
         return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // Handle row selection as needed
     }
 }
 
@@ -174,29 +181,37 @@ extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
-        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-            self.updateModel(indexPath: indexPath)
-        }
         
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            let reminderToDelete = self.reminderArray[indexPath.row]
+            
+            if let ownerId = reminderToDelete.ownerId, let documentId = reminderToDelete.documentID {
+                // Update the local array first
+                if let indexToDelete = self.reminderArray.firstIndex(where: { $0.documentID == documentId }) {
+                    self.reminderArray.remove(at: indexToDelete)
+                    
+                    // Update Firestore
+                    self.db.collection("reminders").document(documentId).delete { error in
+                        if let error = error {
+                            print("Error deleting document: \(error)")
+                        } else {
+                            print("Document successfully deleted!")
+                            // Firestore will trigger the snapshot listener, updating the table view
+                        }
+                    }
+                }
+            }
+        }
+
         // Customize the action appearance
         deleteAction.image = UIImage(named: "Trash")
-        
+
         return [deleteAction]
     }
-    
-    func updateModel(indexPath: IndexPath){
-        
-        print("doc")
-        print("\(db.collection("reminders").document(reminderArray[indexPath.row].documentID!))")
-        
-        db.collection("reminders").document("HDijj4I8AsMJK6qn5KZP").delete() { err in
-          if let err = err {
-            print("Error removing document: \(err)")
-          } else {
-            print("Document successfully removed!")
-          }
-        }
-    }
+
+
+
+
     
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
         var options = SwipeOptions()
@@ -204,70 +219,6 @@ extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
         return options
     }
     
-    func deleteReminder(at indexPath: IndexPath) {
-        
-            print("Delete")
-
-        let reminder = self.reminderArray[indexPath.row]
-
-        // Delete the reminder from Firestore
-        self.deleteReminderFromFirestore(reminder.documentID!) { success in
-            if success {
-                print("Success")
-
-                // Remove the reminder from your local array
-                self.reminderArray.remove(at: indexPath.row)
-
-                // Update the table view with animation
-                self.tableView.beginUpdates()
-                self.tableView.deleteRows(at: [indexPath], with: .automatic) // Delete the row
-                self.tableView.endUpdates()
-            } else {
-                // Handle the delete error if necessary
-                print("Error deleting reminder from Firestore")
-            }
-        }
-    }
-    
-    // Function to delete a reminder from Firestore
-    func deleteReminderFromFirestore(_ reminderDocumentID: String, completion: @escaping (Bool) -> Void) {
-        if let user = Auth.auth().currentUser {
-            let ownerId = user.uid  // Get the current user's UID
-            
-            let db = Firestore.firestore()
-            let remindersCollection = db.collection("reminders")
-            
-            // Reference to the specific reminder document using its auto-generated ID
-            let reminderDocRef = remindersCollection.document(reminderDocumentID)
-            
-            // Get the document data to check if the reminder belongs to the current user
-            reminderDocRef.getDocument { (document, error) in
-                if let error = error {
-                    print("Error getting reminder document: \(error.localizedDescription)")
-                    completion(false)
-                } else if let data = document?.data(), let documentOwnerId = data["ownerId"] as? String {
-                    if documentOwnerId == ownerId {
-                        // The reminder belongs to the current user, so it can be deleted
-                        reminderDocRef.delete { error in
-                            if let error = error {
-                                print("Error deleting reminder from Firestore: \(error.localizedDescription)")
-                                completion(false)
-                            } else {
-                                print("Reminder deleted from Firestore")
-                                completion(true)
-                            }
-                        }
-                    } else {
-                        print("Reminder does not belong to the current user")
-                        completion(false)
-                    }
-                } else {
-                    print("Reminder data is missing or ownerId is not a string")
-                    completion(false)
-                }
-            }
-        }
-    }
-    
-    
+  
 }
+
