@@ -17,15 +17,18 @@ class HomeReminderTableViewController: UITableViewController {
     var reminderArray = [ReminderModel(opened: false, title: "a", description: "aa", date: "2/2/23",documentID: nil, ownerId: nil),
                              ReminderModel(opened: false, title: "b", description: "bb", date: "2/3/24", documentID: nil, ownerId: nil)]
     
-    var displayArray = [ReminderModel]()
+    var filteredReminders = [ReminderModel]()
+    var originalReminders: [ReminderModel] = [] // Keep a reference to the original data
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.dataSource = self
+        tableView.delegate = self
+        filteredReminders = reminderArray
+        
         addButton()
         addProfileButton()
         loadReminders()
-        tableView.dataSource = self
-        tableView.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -44,18 +47,19 @@ class HomeReminderTableViewController: UITableViewController {
     }
     
     func loadReminders() {
-        reminderArray = []
-        
+        filteredReminders = []
+
         if let user = Auth.auth().currentUser {
             let ownerId = user.uid  // Get the current user's UID
-            
+
             db.collection("reminders")
                 .whereField("ownerId", isEqualTo: ownerId)  // Filter reminders by owner ID
-                .order(by: "Date")
+                .order(by: "Date") // Make sure "Date" is spelled correctly (use uppercase "D") if that's your field name
                 .addSnapshotListener { (querySnapshot, err) in
                     if let err = err {
                         print("Error getting documents: \(err)")
                     } else {
+                        self.filteredReminders = [] // Clear the filteredReminders array before adding new data
                         if let snapshotDocuments = querySnapshot?.documents {
                             for document in snapshotDocuments {
                                 let data = document.data()
@@ -67,18 +71,19 @@ class HomeReminderTableViewController: UITableViewController {
                                         date: data["Date"] as! String,
                                         documentID: documentID, ownerId: ownerId
                                     )
-                                    self.reminderArray.append(newReminder)
-                                    
-                                    DispatchQueue.main.async {
-                                        self.tableView.reloadData()
-                                    }
+                                    self.filteredReminders.append(newReminder)
                                 }
                             }
+                            // Set the originalReminders to the filteredReminders
+                            self.originalReminders = self.filteredReminders
+                        }
+                        // Reload the table view after updating the data
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
                         }
                     }
                 }
         }
-        self.tableView.reloadData()
     }
     
     func addButton(){
@@ -151,7 +156,7 @@ class HomeReminderTableViewController: UITableViewController {
     // MARK: - Table view data source
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return reminderArray.count ?? 1
+        return filteredReminders.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -164,13 +169,13 @@ class HomeReminderTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SwipeTableViewCell
         
         cell.delegate = self
-        cell.textLabel?.text = reminderArray[indexPath.row].title
+        cell.textLabel?.text = filteredReminders[indexPath.row].title
         
         // Set the font for the title (left side) label
         cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         
         // Set the detail (right side) of the cell
-        cell.detailTextLabel?.text = reminderArray[indexPath.row].date
+        cell.detailTextLabel?.text = filteredReminders[indexPath.row].date
         
         return cell
     }
@@ -184,12 +189,12 @@ extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
         guard orientation == .right else { return nil }
         
         let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-            let reminderToDelete = self.reminderArray[indexPath.row]
+            let reminderToDelete = self.filteredReminders[indexPath.row]
             
             if let ownerId = reminderToDelete.ownerId, let documentId = reminderToDelete.documentID {
                 // Update the local array first
-                if let indexToDelete = self.reminderArray.firstIndex(where: { $0.documentID == documentId }) {
-                    self.reminderArray.remove(at: indexToDelete)
+                if let indexToDelete = self.filteredReminders.firstIndex(where: { $0.documentID == documentId }) {
+                    self.filteredReminders.remove(at: indexToDelete)
                     
                     // Update Firestore
                     self.db.collection("reminders").document(documentId).delete { error in
@@ -226,39 +231,26 @@ extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
 extension HomeReminderTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
-            // If the search text is empty, reload all items
-            loadReminders()
+            // If the search bar is empty, show the original table view
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
             }
+            // Reload the original data
+            filteredReminders = originalReminders
+            self.tableView.reloadData()
         } else {
-            // Perform a Firestore query to get items that match the search text
-            let query = db.collection("items")
-                .whereField("title", isGreaterThanOrEqualTo: searchText)
-                .whereField("title", isLessThan: searchText + "z")  // This assumes a case-insensitive search
-
-            query.addSnapshotListener { (querySnapshot, error) in
-                if let error = error {
-                    print("Error getting documents: \(error)")
-                } else {
-                    if let documents = querySnapshot?.documents {
-                        // Map Firestore documents to your ReminderModel
-                        let filteredItems = documents.compactMap { document -> ReminderModel? in
-                            let data = document.data()
-                            guard let title = data["title"] as? String,
-                                  let dateCreated = data["dateCreated"] as? Timestamp else {
-                                return nil
-                            }
-                            let reminder = ReminderModel(title: title)
-                            return reminder
-                        }
-                        self.reminderArray = filteredItems
-                        self.tableView.reloadData()
-                    }
-                }
+            // If there's text in the search bar, filter the reminders based on the search text
+            let searchTextLowercased = searchText.lowercased()
+            filteredReminders = originalReminders.filter { reminder in
+                // Case-insensitive search for reminders containing the search text
+                return reminder.title?.lowercased().contains(searchTextLowercased) ?? false
+            }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
             }
         }
     }
+
     
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         // Allow editing and return true
@@ -278,8 +270,8 @@ extension HomeReminderTableViewController: UISearchBarDelegate {
         // Handle actions when the cancel button is clicked
         searchBar.text = ""
         searchBar.resignFirstResponder()
-//        displayArray = reminderArray
-//        tableView.reloadData()
+        //        displayArray = reminderArray
+        //        tableView.reloadData()
         loadReminders()
     }
     
@@ -298,7 +290,8 @@ extension HomeReminderTableViewController: UISearchBarDelegate {
     }
     
     // Handle tap gesture to resign search bar when the user clicks anywhere else on the screen
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        searchBar.resignFirstResponder()
-//    }
+//        override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//            searchBar.resignFirstResponder()
+//        }
+    
 }
