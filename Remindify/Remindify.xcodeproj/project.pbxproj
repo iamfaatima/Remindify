@@ -11,6 +11,7 @@
 		D716CCC72AF7D7010002FB7E /* HomeReminderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D716CCC62AF7D7010002FB7E /* HomeReminderTableViewController.swift */; };
 		D75250522AF8E6B600B6C264 /* ReminderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75250512AF8E6B600B6C264 /* ReminderModel.swift */; };
 		D75250542AF8EED600B6C264 /* AddReminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75250532AF8EED600B6C264 /* AddReminderViewController.swift */; };
+		D7B2FADE2AFE761200F48441 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = D7B2FADD2AFE761200F48441 /* Sounds */; };
 		D7B711FD2AF505E400424557 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B711FC2AF505E400424557 /* AppDelegate.swift */; };
 		D7B711FF2AF505E400424557 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B711FE2AF505E400424557 /* SceneDelegate.swift */; };
 		D7B712012AF505E400424557 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712002AF505E400424557 /* LoginViewController.swift */; };
@@ -50,6 +51,7 @@
 		D716CCC62AF7D7010002FB7E /* HomeReminderTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeReminderTableViewController.swift; sourceTree = "<group>"; };
 		D75250512AF8E6B600B6C264 /* ReminderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderModel.swift; sourceTree = "<group>"; };
 		D75250532AF8EED600B6C264 /* AddReminderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReminderViewController.swift; sourceTree = "<group>"; };
+		D7B2FADD2AFE761200F48441 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
 		D7B711F92AF505E400424557 /* Remindify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Remindify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B711FC2AF505E400424557 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D7B711FE2AF505E400424557 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				D7B712122AF5062300424557 /* Models */,
 				D7B712052AF505E500424557 /* Assets.xcassets */,
 				D7B712072AF505E500424557 /* LaunchScreen.storyboard */,
+				D7B2FADD2AFE761200F48441 /* Sounds */,
 				D7B7120A2AF505E500424557 /* Info.plist */,
 				D7B712222AF5226A00424557 /* GoogleService-Info.plist */,
 			);
@@ -260,6 +263,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7B2FADE2AFE761200F48441 /* Sounds in Resources */,
 				D7B712092AF505E500424557 /* LaunchScreen.storyboard in Resources */,
 				D7B712232AF5226A00424557 /* GoogleService-Info.plist in Resources */,
 				D7B712062AF505E500424557 /* Assets.xcassets in Resources */,
