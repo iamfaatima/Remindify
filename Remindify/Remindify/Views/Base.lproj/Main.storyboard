@@ -11,7 +11,7 @@
         <!--Login View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="LoginViewController" customModule="Remindify" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" id="BYZ-38-t0r" customClass="LoginViewController" customModule="Remindify" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -260,13 +260,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Date/Time" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8dE-1p-bf6">
-                                <rect key="frame" x="53" y="447" width="90.666666666666671" height="34.333333333333336"/>
+                                <rect key="frame" x="39" y="377" width="90.666666666666671" height="34.333333333333336"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GVA-B6-Oa0">
-                                <rect key="frame" x="290" y="443" width="52.333333333333314" height="34.333333333333336"/>
+                                <rect key="frame" x="279" y="381" width="52.333333333333314" height="34.333333333333336"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="exclamationmark.circle.fill" catalog="system"/>
@@ -298,12 +298,19 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="date" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wLk-bu-cya">
+                                <rect key="frame" x="26" y="446" width="343" height="24"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="1wy-i7-vmu"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <connections>
                         <outlet property="dateButton" destination="GVA-B6-Oa0" id="sRs-Oo-V4R"/>
+                        <outlet property="dateLabel" destination="wLk-bu-cya" id="qfa-lj-KrJ"/>
                         <outlet property="dateTimeLabel" destination="8dE-1p-bf6" id="d9A-1W-U30"/>
                         <outlet property="descriptionField" destination="Iri-kw-xF1" id="0RO-7R-ryK"/>
                         <outlet property="saveButton" destination="7Li-76-1lg" id="Oa6-wR-55a"/>
@@ -324,7 +331,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="Fgh-pM-DQG">
-                                <rect key="frame" x="20" y="109" width="343" height="307"/>
+                                <rect key="frame" x="20" y="109" width="343" height="361"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Title" minimumFontSize="50" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="b8u-7Q-8dB">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="71.666666666666671"/>
@@ -360,8 +367,13 @@
                                             </button>
                                         </subviews>
                                     </stackView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="date" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IJo-4S-C9c">
+                                        <rect key="frame" x="0.0" y="269.66666666666669" width="343" height="24"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Qh-cb-ZXg">
-                                        <rect key="frame" x="0.0" y="269.66666666666669" width="343" height="37.333333333333314"/>
+                                        <rect key="frame" x="0.0" y="323.66666666666669" width="343" height="37.333333333333314"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" secondItem="4Qh-cb-ZXg" secondAttribute="height" multiplier="200:50" id="sJ2-KL-a4c"/>
                                         </constraints>
@@ -388,6 +400,7 @@
                     </view>
                     <connections>
                         <outlet property="chooseDateTimeButton" destination="9vY-eI-iRh" id="DUE-Jr-7Vy"/>
+                        <outlet property="dateLabel" destination="IJo-4S-C9c" id="agw-Lw-Vfd"/>
                         <outlet property="descriptionTextField" destination="crI-Ws-S9K" id="a8f-p2-TpZ"/>
                         <outlet property="saveButton" destination="4Qh-cb-ZXg" id="cij-j7-C7t"/>
                         <outlet property="titleTextField" destination="b8u-7Q-8dB" id="jZy-JY-kzg"/>

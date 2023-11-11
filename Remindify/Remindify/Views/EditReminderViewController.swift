@@ -21,6 +21,7 @@ class EditReminderViewController: UIViewController {
     let dateFormatter = DateFormatter()
     var updateAlert: UIAlertController?
 
+    @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var titleView: UITextField!
     @IBOutlet weak var warningLabel: UILabel!
     @IBOutlet weak var descriptionField: UITextField!
@@ -39,6 +40,9 @@ class EditReminderViewController: UIViewController {
                 self.selectedDate = date // Store the selected date
                 self.dateFormatter.dateFormat = "HH:mm dd/MM/yyyy"
                 self.dateString = self.dateFormatter.string(from: date)
+                DispatchQueue.main.async {
+                    self.dateLabel.text = self.dateString
+                }
             }
             
             picker.show()
@@ -74,6 +78,9 @@ class EditReminderViewController: UIViewController {
             titleView.text = reminder.title
             descriptionField.text = reminder.description
             if let date = reminder.date{
+                DispatchQueue.main.async {
+                    self.dateLabel.text = date
+                }
                 selectedDate = dateFormatter.date(from: date)
             }
         }

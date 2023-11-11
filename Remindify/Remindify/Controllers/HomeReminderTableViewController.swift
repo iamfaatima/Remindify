@@ -9,26 +9,41 @@ import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 import SwipeCellKit
+import CoreMotion
 
 class HomeReminderTableViewController: UITableViewController {
     
     let db = Firestore.firestore()
-    
+    var updateAlert: UIAlertController?
     var reminderArray = [ReminderModel(opened: false, title: "a", description: "aa", date: "2/2/23",documentID: nil, ownerId: nil),
-                             ReminderModel(opened: false, title: "b", description: "bb", date: "2/3/24", documentID: nil, ownerId: nil)]
+                         ReminderModel(opened: false, title: "b", description: "bb", date: "2/3/24", documentID: nil, ownerId: nil)]
     
     var filteredReminders = [ReminderModel]()
     var originalReminders: [ReminderModel] = [] // Keep a reference to the original data
-
+    let addButton = UIButton(type: .system)
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Add an observer for orientation change
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+        
+        // Left Bar Button (Logout)
+        let leftBarButton = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(logoutButtonTapped))
+        self.navigationItem.leftBarButtonItem = leftBarButton
+        
+        // Increase the size of the navigation bar
+        if let navigationBarFrame = navigationController?.navigationBar.frame {
+            navigationController?.navigationBar.frame = CGRect(x: navigationBarFrame.origin.x, y: navigationBarFrame.origin.y, width: navigationBarFrame.size.width, height: 200)
+        }
+
+        
         tableView.dataSource = self
         tableView.delegate = self
         filteredReminders = reminderArray
         navigationItem.hidesBackButton = true
         requestNotificationAuthorization()
-        addButton()
+        addButtonToScreen()
         addProfileButton()
         loadReminders()
     }
@@ -41,14 +56,21 @@ class HomeReminderTableViewController: UITableViewController {
         }
     }
     
-
+    @objc func orientationDidChange() {
+            if UIDevice.current.orientation.isLandscape {
+                // Device is in landscape mode
+                addButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.frame.height - 150).isActive = true
+                addButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: view.frame.width - 100 ).isActive = true
+            }
+        }
+    
     
     func loadReminders() {
         filteredReminders = []
-
+        
         if let user = Auth.auth().currentUser {
             let ownerId = user.uid  // Get the current user's UID
-
+            
             db.collection("reminders")
                 .whereField("ownerId", isEqualTo: ownerId)  // Filter reminders by owner ID
                 .order(by: "Date") // Make sure "Date" is spelled correctly (use uppercase "D") if that's your field name
@@ -66,7 +88,7 @@ class HomeReminderTableViewController: UITableViewController {
                                         description: data["Description"] as! String,
                                         date: data["Date"] as! String,
                                         documentID: documentID, ownerId: ownerId)
-                                        self.filteredReminders.append(newReminder)
+                                    self.filteredReminders.append(newReminder)
                                     
                                     
                                 }
@@ -86,31 +108,29 @@ class HomeReminderTableViewController: UITableViewController {
         }
     }
     
-    func addButton(){
+    func addButtonToScreen() {
         // Create a UIButton with an "add" symbol
-        let addButton = UIButton(type: .system)
-        addButton.setImage(UIImage(systemName: "plus"), for: .normal) // "plus" is the SF Symbol name for the "add" symbol
-        
-        // Set up the button's frame or constraints
-        addButton.frame = CGRect(x: tableView.frame.width - 100, y: tableView.frame.height - 200, width: 80, height: 80)
+        addButton.setImage(UIImage(systemName: "plus"), for: .normal)
+
         addButton.backgroundColor = .lightGray
         addButton.tintColor = .black
         // Make the button's corners round
-        addButton.layer.cornerRadius = addButton.frame.height / 2
+        addButton.layer.cornerRadius = 40
         addButton.layer.masksToBounds = true
-        
+        addButton.translatesAutoresizingMaskIntoConstraints = false
+
         // Add a target action to the button
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
-        
-        // Add the button to your view
+
+        // Add the button to your view controller's view
         view.addSubview(addButton)
-        
-        // Make sure the button is added on top of the table view.
-        view.bringSubviewToFront(addButton)
-        
-        
-        
+
+        addButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.frame.width - 100).isActive = true
+        addButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: view.frame.height - 150 ).isActive = true
+        addButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        addButton.heightAnchor.constraint(equalToConstant: 80).isActive = true
     }
+
     @objc func addButtonTapped() {
         //navigate to add reminders
         let addReminderViewController = self.storyboard?.instantiateViewController(withIdentifier: "AddReminderViewController") as! AddReminderViewController
@@ -120,38 +140,62 @@ class HomeReminderTableViewController: UITableViewController {
     //MARK: - Profile Button
     
     func addProfileButton() {
-        let button = UIButton(type: .custom)
-        
-        // Load the user's photoURL and set it as the button's background image
+        let buttonSize: CGFloat = 40  // Adjust the size as needed
+        let buttonFrame = CGRect(x: 0, y: 0, width: buttonSize, height: buttonSize)
+
+        let customButton = UIButton(frame: buttonFrame)
+        customButton.layer.cornerRadius = buttonSize / 2  // Make it rounded
+        customButton.clipsToBounds = true
+
         if let user = Auth.auth().currentUser, let photoURL = user.photoURL {
-            button.sd_setBackgroundImage(with: photoURL, for: .normal, placeholderImage: UIImage(named: "Profile"))
+            customButton.sd_setBackgroundImage(with: photoURL, for: .normal, placeholderImage: UIImage(named: "Profile"))
         } else {
-            // Use a default image if the user doesn't have a photoURL
-            button.setImage(UIImage(named: "Profile"), for: .normal)
+            customButton.setImage(UIImage(systemName: "person.circle.fill") , for: .normal)
         }
-        
-        // Set the button's frame to position it in the top-right corner
-        button.frame = CGRect(x: tableView.frame.width - 100, y: 0, width: 80, height: 80)
-        
-        // Add a target for the button to handle the button tap action
-        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
-        
-        button.layer.cornerRadius = button.frame.height / 2
-        button.layer.masksToBounds = true
-        
-        // Make sure the button is added on top of the table view.
-        view.bringSubviewToFront(button)
-        
-        // Add the button as a subview to your view controller's view
-        view.addSubview(button)
+
+        customButton.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
+
+        let customView = UIView(frame: buttonFrame)
+        customView.addSubview(customButton)
+
+        let profileBarButton = UIBarButtonItem(customView: customView)
+        self.navigationItem.rightBarButtonItem = profileBarButton
     }
+
     
     @objc func profileButtonTapped() {
         //navigate to profile
         let profileViewController = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
         self.navigationController?.pushViewController(profileViewController, animated: true)
     }
+    
+    //MARK: - bar buttons
 
+    @objc func logoutButtonTapped() {
+        // Handle the action for the left bar button (Logout)
+        do {
+            try Auth.auth().signOut()
+            updateAlert = UIAlertController(title: "Logging Out", message: nil, preferredStyle: .alert)
+            present(updateAlert!, animated: true, completion: nil)
+            
+            // Add a delay to dismiss the alert after a few seconds
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.updateAlert?.dismiss(animated: true, completion: nil)
+                        
+                        // Navigate to the login view controller on the main thread
+                        DispatchQueue.main.async {
+                            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+                            self.navigationController?.pushViewController(loginViewController, animated: true)
+                        }
+                    }
+            
+        } catch {
+            print("Error while signing out: \(error)")
+        }
+    }
+
+
+    
     
     // MARK: - Table view data source
     
@@ -191,7 +235,8 @@ class HomeReminderTableViewController: UITableViewController {
         editViewController.reminder = selectedReminder
         self.navigationController?.pushViewController(editViewController, animated: true)
     }
-
+    
+    
     
 }
 
@@ -224,16 +269,16 @@ extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
                 }
             }
         }
-
+        
         // Customize the action appearance
         deleteAction.image = UIImage(named: "Trash")
-
+        
         return [deleteAction]
     }
-
-
-
-
+    
+    
+    
+    
     
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
         var options = SwipeOptions()
@@ -241,7 +286,7 @@ extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
         return options
     }
     
-  
+    
 }
 
 extension HomeReminderTableViewController: UISearchBarDelegate {
@@ -266,7 +311,7 @@ extension HomeReminderTableViewController: UISearchBarDelegate {
             }
         }
     }
-
+    
     
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         // Allow editing and return true
@@ -274,7 +319,6 @@ extension HomeReminderTableViewController: UISearchBarDelegate {
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        // Handle actions when the search bar begins editing (optional)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -306,9 +350,9 @@ extension HomeReminderTableViewController: UISearchBarDelegate {
     }
     
     // Handle tap gesture to resign search bar when the user clicks anywhere else on the screen
-//        override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//            searchBar.resignFirstResponder()
-//        }
+    //        override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    //            searchBar.resignFirstResponder()
+    //        }
     
 }
 

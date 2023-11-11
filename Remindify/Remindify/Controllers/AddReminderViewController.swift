@@ -26,6 +26,7 @@ class AddReminderViewController: UIViewController {
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var descriptionTextField: UITextField!
     @IBOutlet weak var chooseDateTimeButton: UIButton!
+    @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var saveButton: UIButton!
     
     var selectedDate: String?
@@ -37,7 +38,7 @@ class AddReminderViewController: UIViewController {
         view.backgroundColor = .dark
         warningLabel.isHidden = true
         UNUserNotificationCenter.current().delegate = self
-
+        dateLabel.isHidden = true
     }
     
     @IBAction func saveButtonPressed(_ sender: UIButton) {
@@ -78,6 +79,10 @@ class AddReminderViewController: UIViewController {
                 }
             }
             if let date = selectedDate{
+                DispatchQueue.main.async {
+                    self.dateLabel.text = date
+                    self.dateLabel.isHidden = false
+                }
                 scheduleAlarmNotification(at: date)
             }
             
@@ -108,6 +113,10 @@ extension AddReminderViewController: DateTimePickerDelegate{
     }
     
     func dateTimePicker(_ picker: DateTimePicker, didSelectDate: Date) {
+        DispatchQueue.main.async {
+            self.dateLabel.isHidden = false
+            self.dateLabel.text = self.selectedDate
+        }
         selectedDate = picker.selectedDateString
     }
 }
