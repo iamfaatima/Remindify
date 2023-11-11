@@ -79,7 +79,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .dark
         
         
         activityIndicator.isHidden = true

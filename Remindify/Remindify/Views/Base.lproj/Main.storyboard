@@ -244,6 +244,77 @@
             </objects>
             <point key="canvasLocation" x="3456" y="31"/>
         </scene>
+        <!--Edit Reminder View Controller-->
+        <scene sceneID="ycF-lx-F8V">
+            <objects>
+                <viewController storyboardIdentifier="EditReminderViewController" id="8m0-ZA-Gba" customClass="EditReminderViewController" customModule="Remindify" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="pnD-kL-o0Q">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KxV-fw-WYn">
+                                <rect key="frame" x="35" y="235" width="343" height="12"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                <color key="textColor" systemColor="systemRedColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Date/Time" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8dE-1p-bf6">
+                                <rect key="frame" x="53" y="447" width="90.666666666666671" height="34.333333333333336"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GVA-B6-Oa0">
+                                <rect key="frame" x="290" y="443" width="52.333333333333314" height="34.333333333333336"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="exclamationmark.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="dateButton:" destination="8m0-ZA-Gba" eventType="touchUpInside" id="6H9-I8-NnS"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Li-76-1lg">
+                                <rect key="frame" x="27" y="506" width="343" height="37.333333333333314"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="  Save">
+                                    <fontDescription key="titleFontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
+                                    <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="saveButtonPressed:" destination="8m0-ZA-Gba" eventType="touchUpInside" id="eiA-3n-fmM"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Title" minimumFontSize="50" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="xn3-XG-EE1">
+                                <rect key="frame" x="27" y="108" width="343" height="71.666666666666671"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="50"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" textContentType="name"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Description" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Iri-kw-xF1">
+                                <rect key="frame" x="29" y="288" width="343" height="31.666666666666657"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="1wy-i7-vmu"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <outlet property="dateButton" destination="GVA-B6-Oa0" id="sRs-Oo-V4R"/>
+                        <outlet property="dateTimeLabel" destination="8dE-1p-bf6" id="d9A-1W-U30"/>
+                        <outlet property="descriptionField" destination="Iri-kw-xF1" id="0RO-7R-ryK"/>
+                        <outlet property="saveButton" destination="7Li-76-1lg" id="Oa6-wR-55a"/>
+                        <outlet property="titleView" destination="xn3-XG-EE1" id="VFR-hp-dtq"/>
+                        <outlet property="warningLabel" destination="KxV-fw-WYn" id="rQY-CE-dzt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="i1h-O0-2EX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4965.6488549618316" y="30.985915492957748"/>
+        </scene>
         <!--Add Reminder View Controller-->
         <scene sceneID="0R7-yi-CvN">
             <objects>
@@ -257,7 +328,6 @@
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Title" minimumFontSize="50" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="b8u-7Q-8dB">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="71.666666666666671"/>
-                                        <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="50"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="words" textContentType="name"/>
                                     </textField>
@@ -318,9 +388,9 @@
                     </view>
                     <connections>
                         <outlet property="chooseDateTimeButton" destination="9vY-eI-iRh" id="DUE-Jr-7Vy"/>
-                        <outlet property="descriptionTextField" destination="crI-Ws-S9K" id="4EM-SI-ej2"/>
+                        <outlet property="descriptionTextField" destination="crI-Ws-S9K" id="a8f-p2-TpZ"/>
                         <outlet property="saveButton" destination="4Qh-cb-ZXg" id="cij-j7-C7t"/>
-                        <outlet property="titleTextField" destination="b8u-7Q-8dB" id="UJo-1c-dpd"/>
+                        <outlet property="titleTextField" destination="b8u-7Q-8dB" id="jZy-JY-kzg"/>
                         <outlet property="warningLabel" destination="63O-Hq-Ao2" id="GtC-yz-diy"/>
                     </connections>
                 </viewController>

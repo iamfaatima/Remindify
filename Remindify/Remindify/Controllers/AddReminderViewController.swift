@@ -16,6 +16,7 @@ class AddReminderViewController: UIViewController {
     
     let db = Firestore.firestore()
     
+    var updateAlert: UIAlertController?
     var alarmDate: Date?
     var audioPlayer: AVAudioPlayer?
     var isAlarmRinging = false
@@ -33,8 +34,10 @@ class AddReminderViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .dark
         warningLabel.isHidden = true
         UNUserNotificationCenter.current().delegate = self
+
     }
     
     @IBAction func saveButtonPressed(_ sender: UIButton) {
@@ -64,10 +67,16 @@ class AddReminderViewController: UIViewController {
                         print("Error adding document: \(err)")
                     } else {
                         print("Document added with ID")
+                        self.updateAlert = UIAlertController(title: "Reminder Added", message: nil, preferredStyle: .alert)
+                        self.present(self.updateAlert!, animated: true, completion: nil)
+                        
+                        // Add a delay to dismiss the alert after a few seconds
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self.updateAlert?.dismiss(animated: true, completion: nil)
+                        }
                     }
                 }
             }
-            print(selectedDate)
             if let date = selectedDate{
                 scheduleAlarmNotification(at: date)
             }

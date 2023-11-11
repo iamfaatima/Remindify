@@ -19,6 +19,7 @@ class HomeReminderTableViewController: UITableViewController {
     
     var filteredReminders = [ReminderModel]()
     var originalReminders: [ReminderModel] = [] // Keep a reference to the original data
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,16 +33,9 @@ class HomeReminderTableViewController: UITableViewController {
         loadReminders()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("viewWillAppear")
+        
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
@@ -187,8 +181,17 @@ class HomeReminderTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //navigate
+        guard indexPath.row < filteredReminders.count else {
+            return
+        }
+        
+        let selectedReminder = filteredReminders[indexPath.row]
+        
+        let editViewController = self.storyboard?.instantiateViewController(withIdentifier: "EditReminderViewController") as! EditReminderViewController
+        editViewController.reminder = selectedReminder
+        self.navigationController?.pushViewController(editViewController, animated: true)
     }
+
     
 }
 
@@ -324,3 +327,4 @@ extension HomeReminderTableViewController: UNUserNotificationCenterDelegate{
         }
     }
 }
+

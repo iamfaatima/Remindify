@@ -42,6 +42,7 @@
 		D7C8F2272AFC03F100740B36 /* RightEye.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C8F21A2AFC03F100740B36 /* RightEye.swift */; };
 		D7C8F2282AFC03F100740B36 /* Head.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C8F21B2AFC03F100740B36 /* Head.swift */; };
 		D7C8F2292AFC03F100740B36 /* Nose.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C8F21C2AFC03F100740B36 /* Nose.swift */; };
+		D7CC98452AFF11370085B63F /* EditReminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC98442AFF11370085B63F /* EditReminderViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +85,7 @@
 		D7C8F21A2AFC03F100740B36 /* RightEye.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RightEye.swift; sourceTree = "<group>"; };
 		D7C8F21B2AFC03F100740B36 /* Head.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Head.swift; sourceTree = "<group>"; };
 		D7C8F21C2AFC03F100740B36 /* Nose.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Nose.swift; sourceTree = "<group>"; };
+		D7CC98442AFF11370085B63F /* EditReminderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditReminderViewController.swift; path = Remindify/Views/EditReminderViewController.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,30 +156,14 @@
 		D7B712102AF505FC00424557 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				D7C8F2142AFC03F000740B36 /* Body.swift */,
-				D7C8F21B2AFC03F100740B36 /* Head.swift */,
-				D7C8F2172AFC03F000740B36 /* LeftArm.swift */,
-				D7C8F2162AFC03F000740B36 /* LeftEar.swift */,
-				D7C8F2182AFC03F000740B36 /* LeftEarMask.swift */,
-				D7C8F2192AFC03F000740B36 /* LeftEye.swift */,
-				D7C8F2102AFC03F000740B36 /* Mouth.swift */,
-				D7C8F2132AFC03F000740B36 /* Muzzle.swift */,
-				D7C8F21C2AFC03F100740B36 /* Nose.swift */,
-				D7C8F2122AFC03F000740B36 /* RightArm.swift */,
-				D7C8F2152AFC03F000740B36 /* RightEar.swift */,
-				D7C8F2112AFC03F000740B36 /* RightEarMask.swift */,
-				D7C8F21A2AFC03F100740B36 /* RightEye.swift */,
-				D7C8F20B2AFC03C300740B36 /* CATransform3D+Helper.swift */,
-				D7C8F20A2AFC03C300740B36 /* Degree.swift */,
-				D7C8F20C2AFC03C300740B36 /* UIColors+ColorPallete.swift */,
-				D7C8F2042AFC035B00740B36 /* CritterAnimatable.swift */,
-				D7C8F2052AFC035B00740B36 /* CritterAssets.swift */,
-				D7C8F2062AFC035B00740B36 /* CritterView.swift */,
+				D7CC98462AFF11530085B63F /* Parts */,
+				D7CC98472AFF11690085B63F /* Helpers */,
 				D7B712002AF505E400424557 /* LoginViewController.swift */,
 				D7B712132AF5091E00424557 /* SignupViewController.swift */,
 				D7B712152AF5094E00424557 /* ProfileViewController.swift */,
 				D7B712172AF5095F00424557 /* PasswordViewController.swift */,
 				D716CCC62AF7D7010002FB7E /* HomeReminderTableViewController.swift */,
+				D7CC98442AFF11370085B63F /* EditReminderViewController.swift */,
 				D75250532AF8EED600B6C264 /* AddReminderViewController.swift */,
 			);
 			path = Controllers;
@@ -197,6 +183,39 @@
 				D75250512AF8E6B600B6C264 /* ReminderModel.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		D7CC98462AFF11530085B63F /* Parts */ = {
+			isa = PBXGroup;
+			children = (
+				D7C8F2142AFC03F000740B36 /* Body.swift */,
+				D7C8F21B2AFC03F100740B36 /* Head.swift */,
+				D7C8F2172AFC03F000740B36 /* LeftArm.swift */,
+				D7C8F2162AFC03F000740B36 /* LeftEar.swift */,
+				D7C8F2182AFC03F000740B36 /* LeftEarMask.swift */,
+				D7C8F2192AFC03F000740B36 /* LeftEye.swift */,
+				D7C8F2102AFC03F000740B36 /* Mouth.swift */,
+				D7C8F2132AFC03F000740B36 /* Muzzle.swift */,
+				D7C8F21C2AFC03F100740B36 /* Nose.swift */,
+				D7C8F2122AFC03F000740B36 /* RightArm.swift */,
+				D7C8F2152AFC03F000740B36 /* RightEar.swift */,
+				D7C8F2112AFC03F000740B36 /* RightEarMask.swift */,
+				D7C8F21A2AFC03F100740B36 /* RightEye.swift */,
+			);
+			path = Parts;
+			sourceTree = "<group>";
+		};
+		D7CC98472AFF11690085B63F /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				D7C8F20B2AFC03C300740B36 /* CATransform3D+Helper.swift */,
+				D7C8F20A2AFC03C300740B36 /* Degree.swift */,
+				D7C8F20C2AFC03C300740B36 /* UIColors+ColorPallete.swift */,
+				D7C8F2042AFC035B00740B36 /* CritterAnimatable.swift */,
+				D7C8F2052AFC035B00740B36 /* CritterAssets.swift */,
+				D7C8F2062AFC035B00740B36 /* CritterView.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -321,6 +340,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7CC98452AFF11370085B63F /* EditReminderViewController.swift in Sources */,
 				D7C8F2222AFC03F100740B36 /* RightEar.swift in Sources */,
 				D7B712012AF505E400424557 /* LoginViewController.swift in Sources */,
 				D7C8F20D2AFC03C300740B36 /* Degree.swift in Sources */,
