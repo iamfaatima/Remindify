@@ -12,7 +12,7 @@ import FirebaseAuth
 import UserNotifications
 import AVFoundation
 
-class AddReminderViewController: UIViewController, DateTimePickerDelegate, UNUserNotificationCenterDelegate {
+class AddReminderViewController: UIViewController {
     
     let db = Firestore.firestore()
     
@@ -24,6 +24,8 @@ class AddReminderViewController: UIViewController, DateTimePickerDelegate, UNUse
     @IBOutlet weak var warningLabel: UILabel!
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var descriptionTextField: UITextField!
+    @IBOutlet weak var chooseDateTimeButton: UIButton!
+    @IBOutlet weak var saveButton: UIButton!
     
     var selectedDate: String?
     
@@ -32,30 +34,7 @@ class AddReminderViewController: UIViewController, DateTimePickerDelegate, UNUse
     override func viewDidLoad() {
         super.viewDidLoad()
         warningLabel.isHidden = true
-        // Request notification authorization
-        requestNotificationAuthorization()
         UNUserNotificationCenter.current().delegate = self
-
-        
-    }
-    
-    @IBAction func pickDateButtonPressed(_ sender: UIButton) {
-        let min = Date().addingTimeInterval(-60 * 60 * 24 * 4)
-        let max = Date().addingTimeInterval(60 * 60 * 24 * 4)
-        let picker = DateTimePicker.create(minimumDate: min, maximumDate: max)
-        picker.frame = CGRect(x: 0, y: 100, width: picker.frame.size.width, height: picker.frame.size.height)
-        
-        picker.completionHandler = { date in
-            
-            self.dateFormatter.dateFormat = "HH:mm dd/MM/yyyy"
-            //self.title = formatter.string(from: date)
-        }
-        picker.delegate = self
-        picker.show()
-    }
-    
-    func dateTimePicker(_ picker: DateTimePicker, didSelectDate: Date) {
-        selectedDate = picker.selectedDateString
     }
     
     @IBAction func saveButtonPressed(_ sender: UIButton) {
@@ -99,19 +78,35 @@ class AddReminderViewController: UIViewController, DateTimePickerDelegate, UNUse
         let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
         self.navigationController?.pushViewController(homeViewController, animated: true)
     }
-    
-    // MARK: - Notification Functions
-    func requestNotificationAuthorization() {
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
-            if granted {
-                print("Notification authorization granted")
-            } else {
-                print("Notification authorization denied or error")
-            }
+}
+
+//MARK: - DateTime Picker
+
+extension AddReminderViewController: DateTimePickerDelegate{
+    @IBAction func pickDateButtonPressed(_ sender: UIButton) {
+        let min = Date().addingTimeInterval(-60 * 60 * 24 * 4)
+        let max = Date().addingTimeInterval(60 * 60 * 24 * 4)
+        let picker = DateTimePicker.create(minimumDate: min, maximumDate: max)
+        picker.frame = CGRect(x: 0, y: 100, width: picker.frame.size.width, height: picker.frame.size.height)
+        
+        picker.completionHandler = { date in
+            
+            self.dateFormatter.dateFormat = "HH:mm dd/MM/yyyy"
+            //self.title = formatter.string(from: date)
         }
+        picker.delegate = self
+        picker.show()
     }
     
+    func dateTimePicker(_ picker: DateTimePicker, didSelectDate: Date) {
+        selectedDate = picker.selectedDateString
+    }
+}
+
+
+// MARK: - Notification Functions
+
+extension AddReminderViewController: UNUserNotificationCenterDelegate{
     // Implement the notification delegate method to handle notifications when the app is in the foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // Handle the notification presentation when the app is in the foreground (e.g., show an alert)

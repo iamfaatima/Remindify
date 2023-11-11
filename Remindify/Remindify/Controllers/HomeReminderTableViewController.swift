@@ -25,7 +25,8 @@ class HomeReminderTableViewController: UITableViewController {
         tableView.dataSource = self
         tableView.delegate = self
         filteredReminders = reminderArray
-        
+        navigationItem.hidesBackButton = true
+        requestNotificationAuthorization()
         addButton()
         addProfileButton()
         loadReminders()
@@ -46,6 +47,8 @@ class HomeReminderTableViewController: UITableViewController {
         }
     }
     
+
+    
     func loadReminders() {
         filteredReminders = []
 
@@ -55,11 +58,10 @@ class HomeReminderTableViewController: UITableViewController {
             db.collection("reminders")
                 .whereField("ownerId", isEqualTo: ownerId)  // Filter reminders by owner ID
                 .order(by: "Date") // Make sure "Date" is spelled correctly (use uppercase "D") if that's your field name
-                .addSnapshotListener { (querySnapshot, err) in
+                .addSnapshotListener() { (querySnapshot, err) in
                     if let err = err {
                         print("Error getting documents: \(err)")
                     } else {
-                        self.filteredReminders = [] // Clear the filteredReminders array before adding new data
                         if let snapshotDocuments = querySnapshot?.documents {
                             for document in snapshotDocuments {
                                 let data = document.data()
@@ -69,14 +71,18 @@ class HomeReminderTableViewController: UITableViewController {
                                         title: title,
                                         description: data["Description"] as! String,
                                         date: data["Date"] as! String,
-                                        documentID: documentID, ownerId: ownerId
-                                    )
-                                    self.filteredReminders.append(newReminder)
+                                        documentID: documentID, ownerId: ownerId)
+                                        self.filteredReminders.append(newReminder)
+                                    
+                                    
+                                }
+                                else{
+                                    print("error")
                                 }
                             }
                             // Set the originalReminders to the filteredReminders
                             self.originalReminders = self.filteredReminders
-                        }
+                        }else{print("errorr")}
                         // Reload the table view after updating the data
                         DispatchQueue.main.async {
                             self.tableView.reloadData()
@@ -179,7 +185,14 @@ class HomeReminderTableViewController: UITableViewController {
         
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //navigate
+    }
+    
 }
+
+//MARK: - SwipeCells
 
 
 // Modify the swipe actions to work with single-row cells
@@ -294,4 +307,20 @@ extension HomeReminderTableViewController: UISearchBarDelegate {
 //            searchBar.resignFirstResponder()
 //        }
     
+}
+
+//MARK: - notifications
+
+extension HomeReminderTableViewController: UNUserNotificationCenterDelegate{
+    
+    func requestNotificationAuthorization() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+            if granted {
+                print("Notification authorization granted")
+            } else {
+                print("Notification authorization denied or error")
+            }
+        }
+    }
 }

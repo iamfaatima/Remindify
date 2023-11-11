@@ -47,6 +47,7 @@ class PasswordViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .dark
         warningLabel.isHidden = true
     }
 }

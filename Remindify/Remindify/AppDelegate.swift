@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
     
@@ -44,7 +44,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = LoginViewController()
         window?.makeKeyAndVisible()
     }
-
-
 }
 
