@@ -73,7 +73,7 @@ class HomeReminderTableViewController: UITableViewController {
             
             db.collection("reminders")
                 .whereField("ownerId", isEqualTo: ownerId)  // Filter reminders by owner ID
-                .order(by: "Date") // Make sure "Date" is spelled correctly (use uppercase "D") if that's your field name
+                .order(by: "Date", descending: true) // Make sure "Date" is spelled correctly (use uppercase "D") if that's your field name
                 .addSnapshotListener() { (querySnapshot, err) in
                     if let err = err {
                         print("Error getting documents: \(err)")
@@ -211,19 +211,19 @@ class HomeReminderTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SwipeTableViewCell
-        
+
         cell.delegate = self
-        cell.textLabel?.text = filteredReminders[indexPath.row].title
-        
+
+        let reminder = filteredReminders[indexPath.row]
+        cell.textLabel?.text = reminder.title
+        cell.detailTextLabel?.text = reminder.date // Set the date to the detail text
+
         // Set the font for the title (left side) label
         cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        
-        // Set the detail (right side) of the cell
-        cell.detailTextLabel?.text = filteredReminders[indexPath.row].date
-        
+
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard indexPath.row < filteredReminders.count else {
             return
@@ -247,34 +247,45 @@ class HomeReminderTableViewController: UITableViewController {
 extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-        guard orientation == .right else { return nil }
-        
-        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-            let reminderToDelete = self.filteredReminders[indexPath.row]
+            guard orientation == .right else { return nil }
             
-            if let ownerId = reminderToDelete.ownerId, let documentId = reminderToDelete.documentID {
-                // Update the local array first
-                if let indexToDelete = self.filteredReminders.firstIndex(where: { $0.documentID == documentId }) {
-                    self.filteredReminders.remove(at: indexToDelete)
+            let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+                let reminderToDelete = self.filteredReminders[indexPath.row]
+                
+                if let ownerId = reminderToDelete.ownerId, let documentId = reminderToDelete.documentID {
                     
-                    // Update Firestore
-                    self.db.collection("reminders").document(documentId).delete { error in
-                        if let error = error {
-                            print("Error deleting document: \(error)")
-                        } else {
-                            print("Document successfully deleted!")
-                            // Firestore will trigger the snapshot listener, updating the table view
+                    // Update the local array first
+                    if let indexToDelete = self.filteredReminders.firstIndex(where: { $0.documentID == documentId }) {
+                        
+                        self.filteredReminders.remove(at: indexToDelete)
+                        // Update Firestore
+                        self.db.collection("reminders").document(documentId).delete { error in
+                            if let error = error {
+                                print("Error deleting document: \(error)")
+                            } else {
+                                
+                                print("Document successfully deleted!")
+                                DispatchQueue.main.async {
+                                    self.loadReminders()
+                                }
+                                // Obtain the notification identifier
+                                let notificationIdentifier = "Reminder_\(documentId)"
+                                // Remove the local notification with the obtained identifier
+                                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
+                                // Firestore will trigger the snapshot listener, updating the table view
+                            }
                         }
+                        
+                        
                     }
                 }
             }
+
+            // Customize the action appearance
+            deleteAction.image = UIImage(named: "Trash")
+
+            return [deleteAction]
         }
-        
-        // Customize the action appearance
-        deleteAction.image = UIImage(named: "Trash")
-        
-        return [deleteAction]
-    }
     
     
     
@@ -288,6 +299,9 @@ extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
     
     
 }
+
+//MARK: - Search Functions
+
 
 extension HomeReminderTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

@@ -150,33 +150,34 @@ extension AddReminderViewController: UNUserNotificationCenterDelegate{
     }
     
     func scheduleAlarmNotification(at date: String) {
+        // Obtain the documentID of the reminder
+        if let documentID = reminder.documentID {
+            let notificationIdentifier = "Reminder_\(documentID)"
         let content = UNMutableNotificationContent()
         content.title = "Alarm"
         content.body = "Time to wake up!"
         content.sound = UNNotificationSound.default
-
+        
         // Play the "A.wav" sound when the notification is scheduled
         if let soundURL = Bundle.main.url(forResource: "A", withExtension: "wav", subdirectory: "Sounds") {
             let alarmSound = UNNotificationSound(named: .init(rawValue: soundURL.relativeString))
             content.sound = alarmSound
         }
-
+        
         let calendar = Calendar.current
         dateFormatter.dateFormat = "HH:mm dd/MM/yyyy" // Corrected date format
-
+        
         if let sdate = dateFormatter.date(from: date) {
             print(sdate)
             alarmDate = sdate
-
+            
             let dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: alarmDate!)
-
+            
             print(dateComponents)
             let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-
-            let identifier = "alarmNotification"
-
-            let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-
+            
+            let request = UNNotificationRequest(identifier: notificationIdentifier, content: content, trigger: trigger)
+            
             let center = UNUserNotificationCenter.current()
             center.add(request) { (error) in
                 if let error = error {
@@ -188,6 +189,7 @@ extension AddReminderViewController: UNUserNotificationCenterDelegate{
         } else {
             print("Date parsing failed.")
         }
+    }
     }
 
 }

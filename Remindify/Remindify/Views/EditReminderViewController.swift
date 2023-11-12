@@ -137,9 +137,13 @@ class EditReminderViewController: UIViewController {
             print(dateComponents)
             let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
 
-            let identifier = "alarmNotification"
-
-            let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+            var notificationIdentifier = "alarmNotification"
+            if let documentID = reminder!.documentID{
+                notificationIdentifier = "Reminder_\(documentID)"
+            }else{
+                warningLabel.text = "Error updating alarm"
+            }
+            let request = UNNotificationRequest(identifier: notificationIdentifier, content: content, trigger: trigger)
 
             let center = UNUserNotificationCenter.current()
             center.add(request) { (error) in
