@@ -20,14 +20,20 @@ class AddReminderViewController: UIViewController {
     var alarmDate: Date?
     var audioPlayer: AVAudioPlayer?
     var isAlarmRinging = false
+    
+    let titleView = UITextView()
+    let warningLabel = UITextField()
+    let descriptionTextView = UITextView()
+    let dateTimeLabel = UILabel()
+    let dateLabel = UILabel()
        
     let dateFormatter = DateFormatter()
-    @IBOutlet weak var warningLabel: UILabel!
-    @IBOutlet weak var titleTextField: UITextField!
-    @IBOutlet weak var descriptionTextField: UITextField!
-    @IBOutlet weak var chooseDateTimeButton: UIButton!
-    @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var saveButton: UIButton!
+//    @IBOutlet weak var warningLabel: UILabel!
+//    @IBOutlet weak var titleView: UITextField!
+//    @IBOutlet weak var descriptionTextView: UITextField!
+//    @IBOutlet weak var dateButton: UIButton!
+//    @IBOutlet weak var dateLabel: UILabel!
+//    @IBOutlet weak var saveButton: UIButton!
     
     var selectedDate: String?
     
@@ -35,14 +41,14 @@ class AddReminderViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .dark
-        warningLabel.isHidden = true
+        view.backgroundColor = .white
+        setupUI()
         UNUserNotificationCenter.current().delegate = self
         dateLabel.isHidden = true
     }
-    
-    @IBAction func saveButtonPressed(_ sender: UIButton) {
-        if titleTextField.text!.isEmpty {
+
+    @objc func saveButtonTapped() {
+        if titleView.text!.isEmpty {
             warningLabel.isHidden = false
             warningLabel.text = "Title can't be empty"
             return
@@ -51,8 +57,8 @@ class AddReminderViewController: UIViewController {
         if let user = Auth.auth().currentUser {
             let ownerId = user.uid  // Get the current user's UID
             
-            reminder.title = titleTextField.text!
-            reminder.description = descriptionTextField.text ?? ""
+            reminder.title = titleView.text!
+            reminder.description = descriptionTextView.text ?? ""
             reminder.date = selectedDate ?? ""
             
             if let title = reminder.title {
@@ -92,12 +98,12 @@ class AddReminderViewController: UIViewController {
         let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
         self.navigationController?.pushViewController(homeViewController, animated: true)
     }
-}
-
+    }
 //MARK: - DateTime Picker
 
 extension AddReminderViewController: DateTimePickerDelegate{
-    @IBAction func pickDateButtonPressed(_ sender: UIButton) {
+    
+    @objc func dateButtonTapped() {
         let min = Date().addingTimeInterval(-60 * 60 * 24 * 4)
         let max = Date().addingTimeInterval(60 * 60 * 24 * 4)
         let picker = DateTimePicker.create(minimumDate: min, maximumDate: max)
@@ -119,8 +125,7 @@ extension AddReminderViewController: DateTimePickerDelegate{
         }
         selectedDate = picker.selectedDateString
     }
-}
-
+    }
 
 // MARK: - Notification Functions
 
@@ -191,5 +196,117 @@ extension AddReminderViewController: UNUserNotificationCenterDelegate{
         }
     }
     }
+    
+    func setupUI(){
+        // Create a scroll view
+        let scrollView = UIScrollView()
+        scrollView.isScrollEnabled = true
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+
+        // Create a stack view to hold the content
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 20
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(stackView)
+
+        // Add a spacing view above the title to push it down
+        let spacingView = UIView()
+        stackView.addArrangedSubview(spacingView)
+
+        // Set the height of the spacing view to create the desired spacing
+        let spacingHeight: CGFloat = 30 // Adjust the value as needed
+        spacingView.heightAnchor.constraint(equalToConstant: spacingHeight).isActive = true
+
+        // Title TextView
+        
+        titleView.font = UIFont.boldSystemFont(ofSize: 36) // Larger and bolder
+        titleView.isScrollEnabled = false
+        titleView.text = "Title"
+        titleView.layer.shadowColor = UIColor.systemTeal.cgColor // Shadow color
+        titleView.layer.shadowOpacity = 0.7 // Shadow opacity
+        titleView.layer.shadowRadius = 8.0 // Shadow radius
+        titleView.layer.shadowOffset = CGSize(width: 0, height: 6) // Shadow offset
+        titleView.backgroundColor = UIColor.systemTeal.withAlphaComponent(0.6) // Background glow effect in sea green
+        titleView.layer.cornerRadius = 12.0 // Rounded corners
+        stackView.addArrangedSubview(titleView)
+
+        // Warning Label (Text Field)
+        
+        warningLabel.text = "Warning"
+        warningLabel.font = UIFont.boldSystemFont(ofSize: 14) // Bolder font
+        warningLabel.textColor = .systemRed
+        warningLabel.isHidden = true
+        stackView.addArrangedSubview(warningLabel)
+
+        // Description TextView
+        
+        descriptionTextView.font = UIFont.boldSystemFont(ofSize: 24) // Bolder font
+        descriptionTextView.isScrollEnabled = false
+        descriptionTextView.text = "Description"
+        descriptionTextView.layer.shadowColor = UIColor.systemTeal.cgColor // Shadow color
+        descriptionTextView.layer.shadowOpacity = 0.7 // Shadow opacity
+        descriptionTextView.layer.shadowRadius = 8.0 // Shadow radius
+        descriptionTextView.layer.shadowOffset = CGSize(width: 0, height: 6) // Shadow offset
+        descriptionTextView.backgroundColor = UIColor.systemTeal.withAlphaComponent(0.6) // Background glow effect in sea green
+        descriptionTextView.layer.cornerRadius = 12.0 // Rounded corners
+        stackView.addArrangedSubview(descriptionTextView)
+
+        // Date Label
+        
+        dateTimeLabel.text = "Date"
+        dateTimeLabel.textAlignment = .left // Align to the left
+
+        // Create a horizontal stack view for the Date Label and Add Button
+        let dateStackView = UIStackView()
+        dateStackView.axis = .horizontal
+        dateStackView.spacing = 10
+        dateStackView.addArrangedSubview(dateTimeLabel)
+
+        // Add Button
+        let dateButton = UIButton()
+        dateButton.setImage(UIImage(systemName: "exclamationmark.circle.fill"), for: .normal)
+        dateStackView.addArrangedSubview(dateButton)
+        dateButton.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
+        
+        stackView.addArrangedSubview(dateStackView)
+
+        // Stored Date Label
+        
+        dateLabel.text = ""
+        stackView.addArrangedSubview(dateLabel)
+
+        // Save Button
+        let saveButton = UIButton()
+        saveButton.setTitle("Save", for: .normal)
+        saveButton.backgroundColor = UIColor.systemTeal // Sea green background color
+        saveButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20) // Bolder font
+        saveButton.layer.shadowColor = UIColor.systemGreen.cgColor // Shadow color
+        saveButton.layer.shadowOpacity = 0.7 // Shadow opacity
+        saveButton.layer.shadowRadius = 8.0 // Shadow radius
+        saveButton.layer.shadowOffset = CGSize(width: 0, height: 6) // Shadow offset
+        saveButton.layer.cornerRadius = 12.0 // Rounded corners
+        stackView.addArrangedSubview(saveButton)
+        saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+
+        // Set constraints for the scroll view
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16), // Left space
+            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16), // Right space
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+
+        // Set constraints for the stack view
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+        ])
+    }
+    
 
 }

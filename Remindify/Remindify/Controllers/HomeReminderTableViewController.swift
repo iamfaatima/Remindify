@@ -86,7 +86,7 @@ class HomeReminderTableViewController: UITableViewController {
                                     let newReminder = ReminderModel(
                                         title: title,
                                         description: data["Description"] as! String,
-                                        date: data["Date"] as! String,
+                                        date: data["Date"] as? String,
                                         documentID: documentID, ownerId: ownerId)
                                     self.filteredReminders.append(newReminder)
                                     

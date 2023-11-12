@@ -247,77 +247,7 @@
         <!--Edit Reminder View Controller-->
         <scene sceneID="ycF-lx-F8V">
             <objects>
-                <viewController storyboardIdentifier="EditReminderViewController" id="8m0-ZA-Gba" customClass="EditReminderViewController" customModule="Remindify" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="pnD-kL-o0Q">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KxV-fw-WYn">
-                                <rect key="frame" x="35" y="235" width="343" height="12"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
-                                <color key="textColor" systemColor="systemRedColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Date/Time" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8dE-1p-bf6">
-                                <rect key="frame" x="39" y="377" width="90.666666666666671" height="34.333333333333336"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GVA-B6-Oa0">
-                                <rect key="frame" x="279" y="381" width="52.333333333333314" height="34.333333333333336"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="exclamationmark.circle.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="dateButton:" destination="8m0-ZA-Gba" eventType="touchUpInside" id="6H9-I8-NnS"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Li-76-1lg">
-                                <rect key="frame" x="27" y="506" width="343" height="37.333333333333314"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="  Save">
-                                    <fontDescription key="titleFontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
-                                    <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="saveButtonPressed:" destination="8m0-ZA-Gba" eventType="touchUpInside" id="eiA-3n-fmM"/>
-                                </connections>
-                            </button>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Title" minimumFontSize="50" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="xn3-XG-EE1">
-                                <rect key="frame" x="27" y="108" width="343" height="71.666666666666671"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="50"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="words" textContentType="name"/>
-                            </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Description" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Iri-kw-xF1">
-                                <rect key="frame" x="29" y="288" width="343" height="31.666666666666657"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="date" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wLk-bu-cya">
-                                <rect key="frame" x="26" y="446" width="343" height="24"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="1wy-i7-vmu"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                    <connections>
-                        <outlet property="dateButton" destination="GVA-B6-Oa0" id="sRs-Oo-V4R"/>
-                        <outlet property="dateLabel" destination="wLk-bu-cya" id="qfa-lj-KrJ"/>
-                        <outlet property="dateTimeLabel" destination="8dE-1p-bf6" id="d9A-1W-U30"/>
-                        <outlet property="descriptionField" destination="Iri-kw-xF1" id="0RO-7R-ryK"/>
-                        <outlet property="saveButton" destination="7Li-76-1lg" id="Oa6-wR-55a"/>
-                        <outlet property="titleView" destination="xn3-XG-EE1" id="VFR-hp-dtq"/>
-                        <outlet property="warningLabel" destination="KxV-fw-WYn" id="rQY-CE-dzt"/>
-                    </connections>
-                </viewController>
+                <viewController storyboardIdentifier="EditReminderViewController" id="8m0-ZA-Gba" customClass="EditReminderViewController" customModule="Remindify" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="i1h-O0-2EX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4965.6488549618316" y="30.985915492957748"/>
@@ -325,88 +255,7 @@
         <!--Add Reminder View Controller-->
         <scene sceneID="0R7-yi-CvN">
             <objects>
-                <viewController storyboardIdentifier="AddReminderViewController" id="iMg-pU-RaG" customClass="AddReminderViewController" customModule="Remindify" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="mnu-rn-JiO">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="Fgh-pM-DQG">
-                                <rect key="frame" x="20" y="109" width="343" height="361"/>
-                                <subviews>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Title" minimumFontSize="50" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="b8u-7Q-8dB">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="71.666666666666671"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="50"/>
-                                        <textInputTraits key="textInputTraits" autocapitalizationType="words" textContentType="name"/>
-                                    </textField>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="63O-Hq-Ao2">
-                                        <rect key="frame" x="0.0" y="101.66666666666666" width="343" height="12"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="10"/>
-                                        <color key="textColor" systemColor="systemRedColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Description" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="crI-Ws-S9K">
-                                        <rect key="frame" x="0.0" y="143.66666666666666" width="343" height="31.666666666666657"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </textField>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="200" translatesAutoresizingMaskIntoConstraints="NO" id="r42-H9-V12">
-                                        <rect key="frame" x="0.0" y="205.33333333333331" width="343" height="34.333333333333343"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date/Time" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nn9-Ff-V4w">
-                                                <rect key="frame" x="0.0" y="0.0" width="90.666666666666671" height="34.333333333333336"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9vY-eI-iRh">
-                                                <rect key="frame" x="290.66666666666669" y="0.0" width="52.333333333333314" height="34.333333333333336"/>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" image="exclamationmark.circle.fill" catalog="system"/>
-                                                <connections>
-                                                    <action selector="pickDateButtonPressed:" destination="iMg-pU-RaG" eventType="touchUpInside" id="SXx-aC-AW5"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                    </stackView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="date" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IJo-4S-C9c">
-                                        <rect key="frame" x="0.0" y="269.66666666666669" width="343" height="24"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Qh-cb-ZXg">
-                                        <rect key="frame" x="0.0" y="323.66666666666669" width="343" height="37.333333333333314"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" secondItem="4Qh-cb-ZXg" secondAttribute="height" multiplier="200:50" id="sJ2-KL-a4c"/>
-                                        </constraints>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="  Save">
-                                            <fontDescription key="titleFontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
-                                            <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        </buttonConfiguration>
-                                        <connections>
-                                            <action selector="saveButtonPressed:" destination="iMg-pU-RaG" eventType="touchUpInside" id="xYe-hg-vza"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                            </stackView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="jKb-kh-C9H"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="Fgh-pM-DQG" firstAttribute="leading" secondItem="jKb-kh-C9H" secondAttribute="leading" constant="20" id="QfU-xl-VTh"/>
-                            <constraint firstItem="jKb-kh-C9H" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Fgh-pM-DQG" secondAttribute="bottom" constant="50" id="ZUF-2g-VHa"/>
-                            <constraint firstItem="jKb-kh-C9H" firstAttribute="trailing" secondItem="Fgh-pM-DQG" secondAttribute="trailing" constant="30" id="ftG-6F-xSz"/>
-                            <constraint firstItem="Fgh-pM-DQG" firstAttribute="top" secondItem="jKb-kh-C9H" secondAttribute="top" constant="50" id="wei-b6-JKx"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="chooseDateTimeButton" destination="9vY-eI-iRh" id="DUE-Jr-7Vy"/>
-                        <outlet property="dateLabel" destination="IJo-4S-C9c" id="agw-Lw-Vfd"/>
-                        <outlet property="descriptionTextField" destination="crI-Ws-S9K" id="a8f-p2-TpZ"/>
-                        <outlet property="saveButton" destination="4Qh-cb-ZXg" id="cij-j7-C7t"/>
-                        <outlet property="titleTextField" destination="b8u-7Q-8dB" id="jZy-JY-kzg"/>
-                        <outlet property="warningLabel" destination="63O-Hq-Ao2" id="GtC-yz-diy"/>
-                    </connections>
-                </viewController>
+                <viewController storyboardIdentifier="AddReminderViewController" id="iMg-pU-RaG" customClass="AddReminderViewController" customModule="Remindify" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W8C-Qj-hij" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4228.2442748091598" y="32.394366197183103"/>
@@ -432,7 +281,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="exclamationmark.circle.fill" catalog="system" width="128" height="123"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
