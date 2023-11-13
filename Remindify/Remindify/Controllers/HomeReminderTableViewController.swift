@@ -1,17 +1,10 @@
-//
-//  HomeReminderTableTableViewController.swift
-//  Remindify
-//
-//  Created by Dev on 05/11/2023.
-//
-
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 import SwipeCellKit
 import CoreMotion
 
-class HomeReminderTableViewController: UITableViewController {
+class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UNUserNotificationCenterDelegate, SwipeTableViewCellDelegate {
     
     let db = Firestore.firestore()
     var updateAlert: UIAlertController?
@@ -20,34 +13,32 @@ class HomeReminderTableViewController: UITableViewController {
     
     var filteredReminders = [ReminderModel]()
     var originalReminders: [ReminderModel] = [] // Keep a reference to the original data
-    let addButton = UIButton(type: .system)
+    
+    
+    let tableView = UITableView()
+    let searchBar = UISearchBar()
+    let footerView = UIView()
+    var isCellExpanded: [Bool] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Add an observer for orientation change
-        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+        view.backgroundColor = .white
+        setupUI()
         
         // Left Bar Button (Logout)
         let leftBarButton = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(logoutButtonTapped))
         self.navigationItem.leftBarButtonItem = leftBarButton
-        
+
         // Increase the size of the navigation bar
         if let navigationBarFrame = navigationController?.navigationBar.frame {
             navigationController?.navigationBar.frame = CGRect(x: navigationBarFrame.origin.x, y: navigationBarFrame.origin.y, width: navigationBarFrame.size.width, height: 200)
         }
-
-        
-        tableView.dataSource = self
-        tableView.delegate = self
         filteredReminders = reminderArray
         navigationItem.hidesBackButton = true
         requestNotificationAuthorization()
-        addButtonToScreen()
         addProfileButton()
         loadReminders()
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -56,13 +47,12 @@ class HomeReminderTableViewController: UITableViewController {
         }
     }
     
-    @objc func orientationDidChange() {
-            if UIDevice.current.orientation.isLandscape {
-                // Device is in landscape mode
-                addButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.frame.height - 150).isActive = true
-                addButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: view.frame.width - 100 ).isActive = true
-            }
-        }
+    @objc func addReminderButtonTapped() {
+        //navigate to add reminders
+        let addReminderViewController = self.storyboard?.instantiateViewController(withIdentifier: "AddReminderViewController") as! AddReminderViewController
+        self.navigationController?.pushViewController(addReminderViewController, animated: true)
+    }
+    
     
     
     func loadReminders() {
@@ -108,60 +98,28 @@ class HomeReminderTableViewController: UITableViewController {
         }
     }
     
-    func addButtonToScreen() {
-        // Create a UIButton with an "add" symbol
-        addButton.setImage(UIImage(systemName: "plus"), for: .normal)
-
-        addButton.backgroundColor = .lightGray
-        addButton.tintColor = .black
-        // Make the button's corners round
-        addButton.layer.cornerRadius = 40
-        addButton.layer.masksToBounds = true
-        addButton.translatesAutoresizingMaskIntoConstraints = false
-
-        // Add a target action to the button
-        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
-
-        // Add the button to your view controller's view
-        view.addSubview(addButton)
-
-        addButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.frame.width - 100).isActive = true
-        addButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: view.frame.height - 150 ).isActive = true
-        addButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
-        addButton.heightAnchor.constraint(equalToConstant: 80).isActive = true
-    }
-
-    @objc func addButtonTapped() {
-        //navigate to add reminders
-        let addReminderViewController = self.storyboard?.instantiateViewController(withIdentifier: "AddReminderViewController") as! AddReminderViewController
-        self.navigationController?.pushViewController(addReminderViewController, animated: true)
-    }
-    
-    //MARK: - Profile Button
-    
     func addProfileButton() {
         let buttonSize: CGFloat = 40  // Adjust the size as needed
         let buttonFrame = CGRect(x: 0, y: 0, width: buttonSize, height: buttonSize)
-
+        
         let customButton = UIButton(frame: buttonFrame)
         customButton.layer.cornerRadius = buttonSize / 2  // Make it rounded
         customButton.clipsToBounds = true
-
+        
         if let user = Auth.auth().currentUser, let photoURL = user.photoURL {
             customButton.sd_setBackgroundImage(with: photoURL, for: .normal, placeholderImage: UIImage(named: "Profile"))
         } else {
             customButton.setImage(UIImage(systemName: "person.circle.fill") , for: .normal)
         }
-
+        
         customButton.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
-
+        
         let customView = UIView(frame: buttonFrame)
         customView.addSubview(customButton)
-
+        
         let profileBarButton = UIBarButtonItem(customView: customView)
         self.navigationItem.rightBarButtonItem = profileBarButton
     }
-
     
     @objc func profileButtonTapped() {
         //navigate to profile
@@ -170,7 +128,7 @@ class HomeReminderTableViewController: UITableViewController {
     }
     
     //MARK: - bar buttons
-
+    
     @objc func logoutButtonTapped() {
         // Handle the action for the left bar button (Logout)
         do {
@@ -179,210 +137,313 @@ class HomeReminderTableViewController: UITableViewController {
             present(updateAlert!, animated: true, completion: nil)
             
             // Add a delay to dismiss the alert after a few seconds
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        self.updateAlert?.dismiss(animated: true, completion: nil)
-                        
-                        // Navigate to the login view controller on the main thread
-                        DispatchQueue.main.async {
-                            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-                            self.navigationController?.pushViewController(loginViewController, animated: true)
-                        }
-                    }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.updateAlert?.dismiss(animated: true, completion: nil)
+                
+                // Navigate to the login view controller on the main thread
+                DispatchQueue.main.async {
+                    let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+                    self.navigationController?.pushViewController(loginViewController, animated: true)
+                }
+            }
             
         } catch {
             print("Error while signing out: \(error)")
         }
     }
-
-
     
+    // MARK: - UITableViewDataSource
     
-    // MARK: - Table view data source
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // Return the number of rows in your table
         return filteredReminders.count ?? 1
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        // Return the desired height for the cells
-        return 65.0 // Adjust the value to the height you want
-    }
-    
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SwipeTableViewCell
-
-        cell.delegate = self
-
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
         let reminder = filteredReminders[indexPath.row]
-        cell.textLabel?.text = reminder.title
-        cell.detailTextLabel?.text = reminder.date // Set the date to the detail text
-
-        // Set the font for the title (left side) label
-        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-
+        
+        cell.titleLabel.text = reminder.title
+        cell.detailLabel.text = "\(reminder.date ?? "")"
+        cell.descriptionLabel.text = "Description: \(reminder.description ?? "")"
+        cell.isExpanded = isCellExpanded[indexPath.row]
+        cell.doubleTapAction = { [weak self] in
+            self?.isCellExpanded[indexPath.row].toggle()
+            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
+        cell.delegate = self
         return cell
     }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard indexPath.row < filteredReminders.count else {
             return
         }
-        
+
         let selectedReminder = filteredReminders[indexPath.row]
-        
+
         let editViewController = self.storyboard?.instantiateViewController(withIdentifier: "EditReminderViewController") as! EditReminderViewController
         editViewController.reminder = selectedReminder
         self.navigationController?.pushViewController(editViewController, animated: true)
     }
     
+    func setupUI() {
+        // Set up the search bar
+        searchBar.delegate = self
+        searchBar.placeholder = "Search Reminders"
+        searchBar.searchBarStyle = .minimal
+        searchBar.barTintColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0) // Sea-green shade
+        searchBar.backgroundImage = UIImage()
+        searchBar.tintColor = .white
+        searchBar.isTranslucent = true
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(searchBar)
+        
+        // Set up the table view
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "Cell")
+        tableView.backgroundColor = .clear // No background color
+        tableView.separatorStyle = .none
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(tableView)
+        
+        // Set up the footer view with sea-green background color
+        footerView.backgroundColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0) // Sea-green shade
+        footerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(footerView)
+        
+        // Add the "Add Reminder" button with a three-dot SF symbol
+        let addButton = UIButton()
+        addButton.setTitle("Add Reminder", for: .normal)
+        addButton.tintColor = .white
+        addButton.backgroundColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0) // Sea-green shade
+        addButton.layer.cornerRadius = 8
+        addButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        addButton.translatesAutoresizingMaskIntoConstraints = false
+        addButton.addTarget(self, action: #selector(addReminderButtonTapped), for: .touchUpInside)
+        footerView.addSubview(addButton)
+        
+        // Initialize the cell expansion states
+        isCellExpanded = Array(repeating: false, count: 10)
+        
+        // Layout constraints
+        NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: footerView.topAnchor),
+            
+            footerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            footerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            footerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            footerView.heightAnchor.constraint(equalToConstant: 60),
+            
+            addButton.centerYAnchor.constraint(equalTo: footerView.centerYAnchor),
+            addButton.leadingAnchor.constraint(equalTo: footerView.leadingAnchor, constant: 16),
+            addButton.trailingAnchor.constraint(equalTo: footerView.trailingAnchor, constant: -16),
+            addButton.heightAnchor.constraint(equalToConstant: 40),
+        ])
+    }
     
-    
-}
+    class CustomTableViewCell: SwipeTableViewCell {
+        let titleLabel = UILabel()
+        let detailLabel = UILabel()
+        let descriptionLabel = UILabel()
+        var descriptionLabelHeightConstraint: NSLayoutConstraint!
+        
+        var isExpanded: Bool = false {
+            didSet {
+                descriptionLabelHeightConstraint.constant = isExpanded ? 44 : 0
+                descriptionLabel.isHidden = !isExpanded
+            }
+        }
+        var doubleTapAction: (() -> Void)?
+        
+        override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+            super.init(style: style, reuseIdentifier: reuseIdentifier)
+            setUI()
+            
+            // Add a double-tap gesture recognizer
+            let doubleTapGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleDoubleTap))
+            doubleTapGesture.minimumPressDuration = 0.5 // Set the required duration for a long press
+            doubleTapGesture.allowableMovement = 10.0 // Set the maximum movement allowed for a long press
 
-//MARK: - SwipeCells
-
-
-// Modify the swipe actions to work with single-row cells
-extension HomeReminderTableViewController: SwipeTableViewCellDelegate {
+            contentView.addGestureRecognizer(doubleTapGesture)
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        func setUI() {
+            contentView.backgroundColor = .clear // No background color
+            contentView.layer.cornerRadius = 10
+            contentView.layer.shadowColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 0.4).cgColor // Sea-green shadow
+            contentView.layer.shadowOffset = CGSize(width: 0, height: 2)
+            contentView.layer.shadowRadius = 4
+            contentView.layer.shadowOpacity = 1.0
+            
+            titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+            titleLabel.textColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0) // Sea-green color
+            titleLabel.numberOfLines = 0
+            
+            detailLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+            detailLabel.textColor = .darkGray
+            detailLabel.numberOfLines = 0
+            
+            descriptionLabel.font = UIFont.systemFont(ofSize: 10, weight: .regular)
+            descriptionLabel.textColor = .darkGray
+            descriptionLabel.numberOfLines = 0
+            
+            addSubview(titleLabel)
+            addSubview(detailLabel)
+            addSubview(descriptionLabel)
+            
+            titleLabel.translatesAutoresizingMaskIntoConstraints = false
+            detailLabel.translatesAutoresizingMaskIntoConstraints = false
+            descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+            
+            NSLayoutConstraint.activate([
+                titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+                titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+                
+                detailLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+                detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+                
+                descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+                descriptionLabel.topAnchor.constraint(equalTo: detailLabel.bottomAnchor, constant: 4),
+                descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+                descriptionLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -12),
+            ])
+            
+            descriptionLabelHeightConstraint = descriptionLabel.heightAnchor.constraint(equalTo: descriptionLabel.heightAnchor, multiplier: isExpanded ? 1.0 : 0.0)
+            descriptionLabelHeightConstraint.isActive = true
+        }
+        
+        @objc func handleDoubleTap() {
+            doubleTapAction?()
+        }
+    }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-            guard orientation == .right else { return nil }
+        guard orientation == .right else { return nil }
+        
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            let reminderToDelete = self.filteredReminders[indexPath.row]
             
-            let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-                let reminderToDelete = self.filteredReminders[indexPath.row]
+            if let ownerId = reminderToDelete.ownerId, let documentId = reminderToDelete.documentID {
                 
-                if let ownerId = reminderToDelete.ownerId, let documentId = reminderToDelete.documentID {
+                // Update the local array first
+                if let indexToDelete = self.filteredReminders.firstIndex(where: { $0.documentID == documentId }) {
                     
-                    // Update the local array first
-                    if let indexToDelete = self.filteredReminders.firstIndex(where: { $0.documentID == documentId }) {
-                        
-                        self.filteredReminders.remove(at: indexToDelete)
-                        // Update Firestore
-                        self.db.collection("reminders").document(documentId).delete { error in
-                            if let error = error {
-                                print("Error deleting document: \(error)")
-                            } else {
-                                
-                                print("Document successfully deleted!")
-                                DispatchQueue.main.async {
-                                    self.loadReminders()
-                                }
-                                // Obtain the notification identifier
-                                let notificationIdentifier = "Reminder_\(documentId)"
-                                // Remove the local notification with the obtained identifier
-                                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
-                                // Firestore will trigger the snapshot listener, updating the table view
+                    self.filteredReminders.remove(at: indexToDelete)
+                    // Update Firestore
+                    self.db.collection("reminders").document(documentId).delete { error in
+                        if let error = error {
+                            print("Error deleting document: \(error)")
+                        } else {
+                            
+                            print("Document successfully deleted!")
+                            DispatchQueue.main.async {
+                                self.loadReminders()
                             }
+                            // Obtain the notification identifier
+                            let notificationIdentifier = "Reminder_\(documentId)"
+                            // Remove the local notification with the obtained identifier
+                            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
+                            // Firestore will trigger the snapshot listener, updating the table view
                         }
-                        
-                        
                     }
+                    
+                    
                 }
             }
-
-            // Customize the action appearance
-            deleteAction.image = UIImage(named: "Trash")
-
-            return [deleteAction]
         }
-    
-    
-    
-    
-    
+        
+        // Customize the action appearance
+        deleteAction.image = UIImage(systemName: "trash")
+        
+        return [deleteAction]
+    }
+
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
         var options = SwipeOptions()
         options.expansionStyle = .destructive
+        options.transitionStyle = .border
+
         return options
     }
-    
-    
-}
-
-//MARK: - Search Functions
-
-
-extension HomeReminderTableViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.isEmpty {
-            // If the search bar is empty, show the original table view
-            DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
-            }
-            // Reload the original data
-            filteredReminders = originalReminders
-            self.tableView.reloadData()
-        } else {
-            // If there's text in the search bar, filter the reminders based on the search text
-            let searchTextLowercased = searchText.lowercased()
-            filteredReminders = originalReminders.filter { reminder in
-                // Case-insensitive search for reminders containing the search text
-                return reminder.title?.lowercased().contains(searchTextLowercased) ?? false
-            }
-            DispatchQueue.main.async {
+        
+        func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+            if searchText.isEmpty {
+                // If the search bar is empty, show the original table view
+                DispatchQueue.main.async {
+                    searchBar.resignFirstResponder()
+                }
+                // Reload the original data
+                filteredReminders = originalReminders
                 self.tableView.reloadData()
-            }
-        }
-    }
-    
-    
-    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        // Allow editing and return true
-        return true
-    }
-    
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-    }
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        // Handle actions when the search button is clicked (optional)
-        searchBar.resignFirstResponder()
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        // Handle actions when the cancel button is clicked
-        searchBar.text = ""
-        searchBar.resignFirstResponder()
-        //        displayArray = reminderArray
-        //        tableView.reloadData()
-        loadReminders()
-    }
-    
-    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
-        // Allow ending editing and return true
-        return true
-    }
-    
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        // Handle actions when the search bar ends editing (optional)
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        // Handle text changes in the search bar (optional)
-        return true
-    }
-    
-    // Handle tap gesture to resign search bar when the user clicks anywhere else on the screen
-    //        override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-    //            searchBar.resignFirstResponder()
-    //        }
-    
-}
-
-//MARK: - notifications
-
-extension HomeReminderTableViewController: UNUserNotificationCenterDelegate{
-    
-    func requestNotificationAuthorization() {
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
-            if granted {
-                print("Notification authorization granted")
             } else {
-                print("Notification authorization denied or error")
+                // If there's text in the search bar, filter the reminders based on the search text
+                let searchTextLowercased = searchText.lowercased()
+                filteredReminders = originalReminders.filter { reminder in
+                    // Case-insensitive search for reminders containing the search text
+                    return reminder.title?.lowercased().contains(searchTextLowercased) ?? false
+                }
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
             }
         }
+        
+        
+        func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+            // Allow editing and return true
+            return true
+        }
+        
+        func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        }
+        
+        func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+            // Handle actions when the search button is clicked (optional)
+            searchBar.resignFirstResponder()
+        }
+        
+        func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+            // Handle actions when the cancel button is clicked
+            searchBar.text = ""
+            searchBar.resignFirstResponder()
+            loadReminders()
+        }
+        
+        func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+            // Allow ending editing and return true
+            return true
+        }
+        
+        func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+            // Handle actions when the search bar ends editing (optional)
+        }
+        
+        func searchBar(_ searchBar: UISearchBar, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+            // Handle text changes in the search bar (optional)
+            return true
+        }
+        func requestNotificationAuthorization() {
+            let center = UNUserNotificationCenter.current()
+            center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+                if granted {
+                    print("Notification authorization granted")
+                } else {
+                    print("Notification authorization denied or error")
+                }
+            }
+        }
+        
     }
-}
-
