@@ -63,6 +63,7 @@ class EditReminderViewController: UIViewController {
     func updateReminderInFirestore(reminder: ReminderModel) {
         if let documentID = reminder.documentID {
             let db = Firestore.firestore()
+            print(reminder.date)
             db.collection("reminders").document(documentID).updateData([
                 "Title": reminder.title,
                 "Description": reminder.description,
@@ -164,7 +165,7 @@ class EditReminderViewController: UIViewController {
                 // Update the reminder properties with the edited data
                 reminder.title = titleView.text
                 reminder.description = descriptionTextView.text
-                reminder.date = dateString
+                reminder.date = dateString ?? reminder.date
             
             if reminder.title == "" {
                 self.warningLabel.text = "Title can't be empty"

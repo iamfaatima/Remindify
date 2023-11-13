@@ -103,6 +103,13 @@ final class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func signupButtonTapped() {
+        if nameTextField.text == ""{
+            DispatchQueue.main.async {
+                self.warningLabel.isHidden = false
+                self.warningLabel.text = "Name is required"
+            }
+            return
+        }
         if let name = nameTextField.text, let email = emailTextField.text, let password = passwordTextField.text {
             if password == confirmPasswordTextField.text {
                 Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
@@ -130,7 +137,7 @@ final class SignupViewController: UIViewController, UITextFieldDelegate {
                                 } else {
                                     DispatchQueue.main.async {
                                         self.warningLabel.isHidden = false
-                                        self.warningLabel.text = "User profile updated successfully"
+                                        self.warningLabel.text = "User profile created successfully"
                                         self.warningLabel.textColor = UIColor.green
                                     }
                                 }
@@ -158,6 +165,7 @@ final class SignupViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
+        navigationItem.hidesBackButton = true
     }
     
     // MARK: - UITextFieldDelegate
@@ -285,15 +293,20 @@ final class SignupViewController: UIViewController, UITextFieldDelegate {
         warningLabel.translatesAutoresizingMaskIntoConstraints = false
         warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         warningLabel.topAnchor.constraint(equalTo: confirmPasswordTextField.bottomAnchor, constant: 8).isActive = true
+        warningLabel.font = UIFont.systemFont(ofSize: 12)
+        warningLabel.adjustsFontSizeToFitWidth = true
+        warningLabel.minimumScaleFactor = 0.5 // Adjust this value as needed
     }
 
     func setUpLoginButtonConstraints() {
+        loginButton.setTitleColor(.white, for: .normal)
         loginButton.translatesAutoresizingMaskIntoConstraints = false
         loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 60).isActive = true
         loginButton.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 16).isActive = true
     }
 
     func setUpSignupButtonConstraints() {
+        signupButton.setTitleColor(.white, for: .normal)
         signupButton.translatesAutoresizingMaskIntoConstraints = false
         signupButton.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -60).isActive = true
         signupButton.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 16).isActive = true

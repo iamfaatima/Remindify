@@ -7,6 +7,7 @@ class PasswordViewController: UIViewController {
     @IBOutlet weak var newPasswordTextField: UITextField!
     @IBOutlet weak var confirmPasswordTextField: UITextField!
     @IBOutlet weak var warningLabel: UILabel!
+    @IBOutlet weak var saveChangesButton: UIButton!
     
     @IBAction func saveChangesButtonPressed(_ sender: UIButton) {
         // Check if the new password and confirm password match
@@ -49,5 +50,7 @@ class PasswordViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .dark
         warningLabel.isHidden = true
+        
+        saveChangesButton.tintColor = .white
     }
 }

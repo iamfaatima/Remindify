@@ -27,6 +27,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
         
         // Left Bar Button (Logout)
         let leftBarButton = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(logoutButtonTapped))
+        leftBarButton.tintColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0)
         self.navigationItem.leftBarButtonItem = leftBarButton
 
         // Increase the size of the navigation bar

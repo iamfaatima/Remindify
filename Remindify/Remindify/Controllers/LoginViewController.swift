@@ -43,6 +43,7 @@ final class LoginViewController: UIViewController, UITextFieldDelegate {
         label.text = "Incorrect password"
         label.textColor = .red
         label.isHidden = true
+        label.numberOfLines = 0
         return label
     }()
     
@@ -50,6 +51,7 @@ final class LoginViewController: UIViewController, UITextFieldDelegate {
         let button = UIButton(type: .system)
         button.setTitle("Login", for: .normal)
         button.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+          
         return button
     }()
     
@@ -123,6 +125,7 @@ final class LoginViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.hidesBackButton = true
         setUpView()
         emailTextField.text = "fatima@gmail.com"
         passwordTextField.text = "1234567"
@@ -208,16 +211,23 @@ final class LoginViewController: UIViewController, UITextFieldDelegate {
         warningLabel.translatesAutoresizingMaskIntoConstraints = false
         warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         warningLabel.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 8).isActive = true
+        
+        warningLabel.font = UIFont.systemFont(ofSize: 12)
         warningLabel.adjustsFontSizeToFitWidth = true
+        warningLabel.minimumScaleFactor = 0.5 // Adjust this value as needed
     }
 
+
       func setUpLoginButtonConstraints() {
+        loginButton.setTitleColor(.white, for: .normal)   // Text color
+          
         loginButton.translatesAutoresizingMaskIntoConstraints = false
         loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -60).isActive = true
         loginButton.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 16).isActive = true
     }
 
       func setUpSignupButtonConstraints() {
+        signupButton.setTitleColor(.white, for: .normal)
         signupButton.translatesAutoresizingMaskIntoConstraints = false
         signupButton.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 60).isActive = true
         signupButton.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 16).isActive = true

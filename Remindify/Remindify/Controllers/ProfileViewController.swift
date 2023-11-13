@@ -79,8 +79,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .dark
-        
+        view.backgroundColor = .white
         
         activityIndicator.isHidden = true
         warningLabel.isHidden = true
@@ -100,12 +99,12 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
             loadProfileImage()
 
             // Make the profileImageView rounded
-            profileImageView.frame = CGRect(x: 140, y: 180, width: 120, height: 120)
+            profileImageView.frame = CGRect(x: 140, y: 140, width: 120, height: 120)
             profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
             profileImageView.clipsToBounds = true
             // Ensure that the aspect ratio of the image is maintained
             profileImageView.contentMode = .scaleAspectFill
-            profileImageView.image = UIImage(imageLiteralResourceName: "Profile")
+            profileImageView.image = UIImage(systemName: "person.circle.fill")
         }
     }
 
@@ -117,7 +116,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
 
     func loadProfileImage() {
         if let user = Auth.auth().currentUser, let photoURL = user.photoURL {
-            profileImageView.sd_setImage(with: photoURL, placeholderImage: UIImage(named: "Profile"))
+            profileImageView.sd_setImage(with: photoURL, placeholderImage: UIImage(named: "person.circle.fill"))
         }
     }
 
@@ -133,69 +132,84 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
         self.navigationController?.pushViewController(passwordViewController, animated: true)
     }
     
-    func setUpImageViewConstraints() {
-      profileImageView.translatesAutoresizingMaskIntoConstraints = false
-      profileImageView.heightAnchor.constraint(equalToConstant: 160).isActive = true
-      profileImageView.widthAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
-      profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-      profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 70).isActive = true
-  }
+    func setupUI() {
+        // Customize the appearance of the activityIndicator
+        activityIndicator.style = .whiteLarge
+            activityIndicator.color = UIColor.systemBlue // Adjust the color as needed
+            activityIndicator.center = view.center
+            activityIndicator.hidesWhenStopped = true // Hide when not animating
 
-   func setUpChangeImageConstraints() {
-      changeImageButton.translatesAutoresizingMaskIntoConstraints = false
-      changeImageButton.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 60).isActive = true
-      changeImageButton.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 16).isActive = true
-  }
+            // Constraints for the activityIndicator
+            activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
 
-  func setUpNameTextFieldConstraints() {
-      nameTextField.translatesAutoresizingMaskIntoConstraints = false
-      nameTextField.heightAnchor.constraint(equalToConstant: 37).isActive = true
-      nameTextField.widthAnchor.constraint(equalToConstant: 207).isActive = true
-      nameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-      nameTextField.topAnchor.constraint(equalTo: changeImageButton.bottomAnchor, constant: 38.8).isActive = true
-  }
+        // Apply styling and constraints for the profileImageView
+        profileImageView.layer.cornerRadius = profileImageView.bounds.width / 2
+        profileImageView.clipsToBounds = true
+        profileImageView.layer.borderWidth = 2
+        profileImageView.layer.borderColor = UIColor.white.cgColor
+        profileImageView.layer.shadowColor = UIColor.white.cgColor
+        profileImageView.layer.shadowOffset = CGSize(width: 0, height: 2)
+        profileImageView.layer.shadowRadius = 4
+        profileImageView.layer.shadowOpacity = 0.5
+        profileImageView.alpha = 0.8
 
-  func setUpWarningLabelConstraints() {
-      warningLabel.translatesAutoresizingMaskIntoConstraints = false
-      warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-      warningLabel.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 8).isActive = true
-      warningLabel.adjustsFontSizeToFitWidth = true
-  }
+        // Customize the appearance of the changeImageButton
+        changeImageButton.backgroundColor = .clear
+        changeImageButton.setTitleColor(UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0), for: .normal) // Sea green text color
+        changeImageButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16) // Bold font
+        changeImageButton.layer.cornerRadius = 8
+        changeImageButton.layer.borderWidth = 1
+        changeImageButton.layer.borderColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0).cgColor // Sea green border color
+        changeImageButton.clipsToBounds = true
+        changeImageButton.alpha = 0.8
 
-  func setUpEmailTextFieldConstraints() {
-      emailTextField.translatesAutoresizingMaskIntoConstraints = false
-      emailTextField.heightAnchor.constraint(equalToConstant: 37).isActive = true
-      emailTextField.widthAnchor.constraint(equalToConstant: 206).isActive = true
-      emailTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-      emailTextField.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 38.8).isActive = true
-  }
+        // Customize the appearance of the changePassword button
+        changePassword.backgroundColor = .clear
+        changePassword.setTitleColor(UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0), for: .normal) // Sea green text color
+        changePassword.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16) // Bold font
+        changePassword.layer.cornerRadius = 8
+        changePassword.layer.borderWidth = 1
+        changePassword.layer.borderColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0).cgColor // Sea green border color
+        changePassword.clipsToBounds = true
+        changePassword.alpha = 0.8
 
-  func setUpPasswordButtonConstraints() {
-      changePassword.translatesAutoresizingMaskIntoConstraints = false
-      changePassword.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 60).isActive = true
-      changePassword.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 16).isActive = true
-  }
+        // Constraints for profileImageView
+        profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        profileImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
 
+        // Constraints for changeImageButton (customized above)
+        changeImageButton.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 20).isActive = true
+        changeImageButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 
-    
-    func setupUI(){
-        setUpImageViewConstraints()
-        setUpChangeImageConstraints()
-        setUpNameTextFieldConstraints()
-        setUpWarningLabelConstraints()
-        setUpEmailTextFieldConstraints()
-        setUpPasswordButtonConstraints()
+        // Constraints for nameTextField (customize as needed)
+        nameTextField.topAnchor.constraint(equalTo: changeImageButton.bottomAnchor, constant: 20).isActive = true
+        nameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+
+        // Constraints for warningLabel (customize as needed)
+        warningLabel.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 20).isActive = true
+        warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+
+        // Constraints for emailTextField (customize as needed)
+        emailTextField.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 20).isActive = true
+        emailTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+
+        // Constraints for changePassword button (customized above)
+        changePassword.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 20).isActive = true
+        changePassword.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+
+        // Constraints for saveButton (customize as needed)
+        saveButton.topAnchor.constraint(equalTo: changePassword.bottomAnchor, constant: 20).isActive = true
+        saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
+
     
 }
 
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-//        if let pickedImage = info[.editedImage] as? UIImage {
-//            profileImageView.image = pickedImage
-//        }
-//        dismiss(animated: true, completion: nil)
-//    }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let pickedImage = info[.editedImage] as? UIImage {
@@ -214,7 +228,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
                 let uploadTask = storageRef.putData(imageData, metadata: nil) { (metadata, error) in
                     // Remove the loading indicator
                     self.activityIndicator.stopAnimating()
-                    self.activityIndicator.removeFromSuperview()
+                    //self.activityIndicator.removeFromSuperview()
 
                     guard error == nil else {
                         // Handle the error

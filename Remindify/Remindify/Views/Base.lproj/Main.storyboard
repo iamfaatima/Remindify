@@ -76,7 +76,7 @@
                                 <rect key="frame" x="302" y="357" width="52" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="✅"/>
+                                <buttonConfiguration key="configuration" style="plain" image="person.fill.checkmark" catalog="system"/>
                                 <connections>
                                     <action selector="saveNameButton:" destination="yeM-ft-uUH" eventType="touchUpInside" id="UU9-4L-ViW"/>
                                 </connections>
@@ -244,6 +244,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="person.fill.checkmark" catalog="system" width="128" height="89"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
