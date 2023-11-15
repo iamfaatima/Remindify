@@ -14,6 +14,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
     var filteredReminders = [ReminderModel]()
     var originalReminders: [ReminderModel] = [] // Keep a reference to the original data
     
+    var listener: ListenerRegistration?
     
     let tableView = UITableView()
     let searchBar = UISearchBar()
@@ -27,7 +28,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
         
         // Left Bar Button (Logout)
         let leftBarButton = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(logoutButtonTapped))
-        leftBarButton.tintColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0)
+        leftBarButton.tintColor = UIColor.systemTeal
         self.navigationItem.leftBarButtonItem = leftBarButton
 
         // Increase the size of the navigation bar
@@ -43,9 +44,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
+        self.tableView.reloadData()
     }
     
     @objc func addReminderButtonTapped() {
@@ -69,6 +68,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
                     if let err = err {
                         print("Error getting documents: \(err)")
                     } else {
+                        self.filteredReminders = []
                         if let snapshotDocuments = querySnapshot?.documents {
                             for document in snapshotDocuments {
                                 let data = document.data()
@@ -91,9 +91,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
                             self.originalReminders = self.filteredReminders
                         }else{print("errorr")}
                         // Reload the table view after updating the data
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                        }
+                        self.tableView.reloadData()
                     }
                 }
         }
@@ -108,9 +106,11 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
         customButton.clipsToBounds = true
         
         if let user = Auth.auth().currentUser, let photoURL = user.photoURL {
-            customButton.sd_setBackgroundImage(with: photoURL, for: .normal, placeholderImage: UIImage(named: "Profile"))
+            // Load the user's profile image
+            customButton.sd_setBackgroundImage(with: photoURL, for: .normal, placeholderImage: UIImage(systemName: "person.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal))
         } else {
-            customButton.setImage(UIImage(systemName: "person.circle.fill") , for: .normal)
+            // Use the default white "person.circle.fill" symbol
+            customButton.setImage(UIImage(systemName: "person.circle.fill")?.withTintColor(.dark, renderingMode: .alwaysOriginal), for: .normal)
         }
         
         customButton.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
@@ -121,6 +121,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
         let profileBarButton = UIBarButtonItem(customView: customView)
         self.navigationItem.rightBarButtonItem = profileBarButton
     }
+
     
     @objc func profileButtonTapped() {
         //navigate to profile
@@ -157,7 +158,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // Return the number of rows in your table
-        return filteredReminders.count ?? 1
+        return filteredReminders.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -193,7 +194,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
         searchBar.delegate = self
         searchBar.placeholder = "Search Reminders"
         searchBar.searchBarStyle = .minimal
-        searchBar.barTintColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0) // Sea-green shade
+        searchBar.barTintColor = UIColor.systemTeal // Sea-green shade
         searchBar.backgroundImage = UIImage()
         searchBar.tintColor = .white
         searchBar.isTranslucent = true
@@ -210,7 +211,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
         view.addSubview(tableView)
         
         // Set up the footer view with sea-green background color
-        footerView.backgroundColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0) // Sea-green shade
+        footerView.backgroundColor = UIColor.systemTeal // Sea-green shade
         footerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(footerView)
         
@@ -218,7 +219,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
         let addButton = UIButton()
         addButton.setTitle("Add Reminder", for: .normal)
         addButton.tintColor = .white
-        addButton.backgroundColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0) // Sea-green shade
+        addButton.backgroundColor = UIColor.systemTeal // Sea-green shade
         addButton.layer.cornerRadius = 8
         addButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         addButton.translatesAutoresizingMaskIntoConstraints = false
@@ -259,7 +260,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
         
         var isExpanded: Bool = false {
             didSet {
-                descriptionLabelHeightConstraint.constant = isExpanded ? 44 : 0
+                descriptionLabelHeightConstraint.constant = isExpanded ? 25.0 : 0.0
                 descriptionLabel.isHidden = !isExpanded
             }
         }
@@ -290,7 +291,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
             contentView.layer.shadowOpacity = 1.0
             
             titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-            titleLabel.textColor = UIColor(red: 46/255, green: 139/255, blue: 87/255, alpha: 1.0) // Sea-green color
+            titleLabel.textColor = UIColor.systemTeal // Sea-green color
             titleLabel.numberOfLines = 0
             
             detailLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
@@ -332,45 +333,49 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-        guard orientation == .right else { return nil }
-        
-        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-            let reminderToDelete = self.filteredReminders[indexPath.row]
+            guard orientation == .right else { return nil }
             
-            if let ownerId = reminderToDelete.ownerId, let documentId = reminderToDelete.documentID {
+            let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+                let reminderToDelete = self.filteredReminders[indexPath.row]
                 
-                // Update the local array first
-                if let indexToDelete = self.filteredReminders.firstIndex(where: { $0.documentID == documentId }) {
+                if let ownerId = reminderToDelete.ownerId, let documentId = reminderToDelete.documentID {
                     
-                    self.filteredReminders.remove(at: indexToDelete)
-                    // Update Firestore
-                    self.db.collection("reminders").document(documentId).delete { error in
-                        if let error = error {
-                            print("Error deleting document: \(error)")
-                        } else {
-                            
-                            print("Document successfully deleted!")
-                            DispatchQueue.main.async {
-                                self.loadReminders()
+                    // Update the local array first
+                    if let indexToDelete = self.filteredReminders.firstIndex(where: { $0.documentID == documentId }) {
+                        
+                        self.filteredReminders.remove(at: indexToDelete)
+                        
+                        // Update Firestore
+                        self.db.collection("reminders").document(documentId).delete { error in
+                            if let error = error {
+                                print("Error deleting document: \(error)")
+                            } else {
+                                
+                                print("Document successfully deleted!")
+                                //...
+                                // Obtain the notification identifier
+                                let notificationIdentifier = "Reminder_\(documentId)"
+                                // Remove the local notification with the obtained identifier
+                                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
+                                // Firestore will trigger the snapshot listener, updating the table view
+                                self.listener?.remove()
+                                
+                               
                             }
-                            // Obtain the notification identifier
-                            let notificationIdentifier = "Reminder_\(documentId)"
-                            // Remove the local notification with the obtained identifier
-                            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
-                            // Firestore will trigger the snapshot listener, updating the table view
+                            self.loadReminders()
                         }
+                        
+                        
                     }
-                    
-                    
                 }
             }
+            
+            // Customize the action appearance
+            deleteAction.image = UIImage(systemName: "trash")
+            
+            return [deleteAction]
         }
-        
-        // Customize the action appearance
-        deleteAction.image = UIImage(systemName: "trash")
-        
-        return [deleteAction]
-    }
+
 
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
         var options = SwipeOptions()
@@ -396,9 +401,8 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
                     // Case-insensitive search for reminders containing the search text
                     return reminder.title?.lowercased().contains(searchTextLowercased) ?? false
                 }
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+
+                self.tableView.reloadData()
             }
         }
         
@@ -420,7 +424,7 @@ class HomeReminderTableViewController: UIViewController, UITableViewDelegate, UI
             // Handle actions when the cancel button is clicked
             searchBar.text = ""
             searchBar.resignFirstResponder()
-            loadReminders()
+            //loadReminders()
         }
         
         func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
