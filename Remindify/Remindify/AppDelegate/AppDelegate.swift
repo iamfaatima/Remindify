@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Override point for customization after application launch.
         FirebaseApp.configure()
         let _ = Firestore.firestore()
-        setUpWindow()
+        //setUpWindow()
         return true
     }
 

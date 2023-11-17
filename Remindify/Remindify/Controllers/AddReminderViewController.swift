@@ -15,6 +15,7 @@ import AVFoundation
 class AddReminderViewController: UIViewController, UITextViewDelegate {
     
     let db = Firestore.firestore()
+    var reminder = ReminderModel()
     
     var updateAlert: UIAlertController?
     var alarmDate: Date?
@@ -31,34 +32,38 @@ class AddReminderViewController: UIViewController, UITextViewDelegate {
     let descriptionPlaceholderLabel: UILabel = UILabel()
     
     let dateFormatter = DateFormatter()
-    //    @IBOutlet weak var warningLabel: UILabel!
-    //    @IBOutlet weak var titleView: UITextField!
-    //    @IBOutlet weak var descriptionTextView: UITextField!
-    //    @IBOutlet weak var dateButton: UIButton!
-    //    @IBOutlet weak var dateLabel: UILabel!
-    //    @IBOutlet weak var saveButton: UIButton!
-    
     var selectedDate: String?
-    
-    var reminder = ReminderModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        navigationController?.navigationBar.tintColor = UIColor.systemTeal
         setupUI()
         UNUserNotificationCenter.current().delegate = self
-        dateLabel.isHidden = true
+        
         // Set delegate for titleView and descriptionTextView
         titleView.delegate = self
         descriptionTextView.delegate = self
         
-        // Check if titleView has pre-populated text
-                titlePlaceholderLabel.isHidden = !titleView.text.isEmpty
-
-                // Check if descriptionTextView has pre-populated text
-                descriptionPlaceholderLabel.isHidden = !descriptionTextView.text.isEmpty
-
+        // Check if the user is logged in
+        if Auth.auth().currentUser == nil {
+            showSessionExpiredPopup()
+            // User is not logged in, navigate to the login view controller
+            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            self.navigationController?.pushViewController(loginViewController, animated: true)
+            return
+        }
+    }
+    
+    // Function to show session expired pop-up
+    func showSessionExpiredPopup() {
+        let alertController = UIAlertController(title: "Session Expired", message: nil, preferredStyle: .alert)
+        
+        // Add any additional customization to the alert controller if needed
+        present(alertController, animated: true, completion: nil)
+        
+        // Dismiss the alert controller after 1 second
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            alertController.dismiss(animated: true, completion: nil)
+        }
     }
     
     @objc func saveButtonTapped() {
@@ -210,8 +215,20 @@ extension AddReminderViewController: UNUserNotificationCenterDelegate{
             }
         }
     }
-    
+}
+
+//MARK: - UI setup
+
+extension AddReminderViewController {
     func setupUI(){
+        view.backgroundColor = .white
+        navigationController?.navigationBar.tintColor = UIColor.systemTeal
+        dateLabel.isHidden = true
+        // Check if titleView has pre-populated text
+        titlePlaceholderLabel.isHidden = !titleView.text.isEmpty
+        // Check if descriptionTextView has pre-populated text
+        descriptionPlaceholderLabel.isHidden = !descriptionTextView.text.isEmpty
+        
         // Create a scroll view
         let scrollView = UIScrollView()
         scrollView.isScrollEnabled = true
@@ -347,14 +364,14 @@ extension AddReminderViewController: UNUserNotificationCenterDelegate{
     }
     
     func textViewDidChange(_ textView: UITextView) {
-            // Check if the titleView is being edited
-            if textView == titleView {
-                titlePlaceholderLabel.isHidden = !textView.text.isEmpty
-            }
-            // Check if the descriptionTextView is being edited
-            else if textView == descriptionTextView {
-                descriptionPlaceholderLabel.isHidden = !textView.text.isEmpty
-            }
+        // Check if the titleView is being edited
+        if textView == titleView {
+            titlePlaceholderLabel.isHidden = !textView.text.isEmpty
         }
+        // Check if the descriptionTextView is being edited
+        else if textView == descriptionTextView {
+            descriptionPlaceholderLabel.isHidden = !textView.text.isEmpty
+        }
+    }
     
 }

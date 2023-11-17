@@ -12,5 +12,6 @@ target 'Remindify' do
   pod 'DateTimePicker'
   pod 'SDWebImage', '~> 5.0'
   pod 'SwipeCellKit'
+  pod 'MBProgressHUD'
   pod 'ChameleonFramework/Swift', :git => 'https://github.com/wowansm/Chameleon.git', :branch => 'swift5'
 end

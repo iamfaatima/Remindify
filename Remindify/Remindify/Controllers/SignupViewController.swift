@@ -4,10 +4,14 @@ import FirebaseAuth
 
 final class SignupViewController: UIViewController, UITextFieldDelegate {
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setUpView()
+    }
+    
     lazy var buttonHorizontalMargin = textFieldHorizontalMargin / 2
     let buttonImageDimension: CGFloat = 18
     lazy var buttonVerticalMargin = (buttonHeight - buttonImageDimension) / 2
-    
     let critterViewDimension: CGFloat = 160
     let critterViewTopMargin: CGFloat = 70
     let textFieldHeight: CGFloat = 37
@@ -17,9 +21,8 @@ final class SignupViewController: UIViewController, UITextFieldDelegate {
     let textFieldWidth: CGFloat = 206
     
     lazy var buttonHeight: CGFloat = textFieldHeight
-        lazy var buttonWidth: CGFloat = (textFieldHorizontalMargin / 2) + 18
-        lazy var buttonFrame: CGRect = CGRect(x: 0, y: 0, width: buttonWidth, height: buttonHeight)
-        
+    lazy var buttonWidth: CGFloat = (textFieldHorizontalMargin / 2) + 18
+    lazy var buttonFrame: CGRect = CGRect(x: 0, y: 0, width: buttonWidth, height: buttonHeight)
     
     lazy var critterViewFrame: CGRect = {
            CGRect(x: 0, y: 0, width: critterViewDimension, height: critterViewDimension)
@@ -94,7 +97,6 @@ final class SignupViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: - Button Tap Functionality
     
-    
     @objc func loginButtonTapped() {
         //navigate to login
         if let navigationController = self.navigationController {
@@ -162,12 +164,6 @@ final class SignupViewController: UIViewController, UITextFieldDelegate {
         notificationCenter.removeObserver(self)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setUpView()
-        navigationItem.hidesBackButton = true
-    }
-    
     // MARK: - UITextFieldDelegate
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -225,6 +221,7 @@ final class SignupViewController: UIViewController, UITextFieldDelegate {
     // MARK: -
     
     func setUpView() {
+        navigationItem.hidesBackButton = true
         view.backgroundColor = .dark
         
         view.addSubview(critterView)

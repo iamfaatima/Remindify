@@ -17,12 +17,10 @@
 		D7B712012AF505E400424557 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712002AF505E400424557 /* LoginViewController.swift */; };
 		D7B712042AF505E400424557 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7B712022AF505E400424557 /* Main.storyboard */; };
 		D7B712062AF505E500424557 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7B712052AF505E500424557 /* Assets.xcassets */; };
-		D7B712092AF505E500424557 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7B712072AF505E500424557 /* LaunchScreen.storyboard */; };
 		D7B712142AF5091E00424557 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712132AF5091E00424557 /* SignupViewController.swift */; };
 		D7B712162AF5094E00424557 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712152AF5094E00424557 /* ProfileViewController.swift */; };
 		D7B712182AF5095F00424557 /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B712172AF5095F00424557 /* PasswordViewController.swift */; };
 		D7B712232AF5226A00424557 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D7B712222AF5226A00424557 /* GoogleService-Info.plist */; };
-		D7C8F2012AFBD70300740B36 /* Helpers in Resources */ = {isa = PBXBuildFile; fileRef = D7C8F2002AFBD70200740B36 /* Helpers */; };
 		D7C8F2072AFC035B00740B36 /* CritterAnimatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C8F2042AFC035B00740B36 /* CritterAnimatable.swift */; };
 		D7C8F2082AFC035B00740B36 /* CritterAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C8F2052AFC035B00740B36 /* CritterAssets.swift */; };
 		D7C8F2092AFC035B00740B36 /* CritterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C8F2062AFC035B00740B36 /* CritterView.swift */; };
@@ -59,13 +57,11 @@
 		D7B712002AF505E400424557 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D7B712032AF505E400424557 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D7B712052AF505E500424557 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D7B712082AF505E500424557 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D7B7120A2AF505E500424557 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D7B712132AF5091E00424557 /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		D7B712152AF5094E00424557 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		D7B712172AF5095F00424557 /* PasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordViewController.swift; sourceTree = "<group>"; };
 		D7B712222AF5226A00424557 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		D7C8F2002AFBD70200740B36 /* Helpers */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Helpers; sourceTree = "<group>"; };
 		D7C8F2042AFC035B00740B36 /* CritterAnimatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CritterAnimatable.swift; sourceTree = "<group>"; };
 		D7C8F2052AFC035B00740B36 /* CritterAssets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CritterAssets.swift; sourceTree = "<group>"; };
 		D7C8F2062AFC035B00740B36 /* CritterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CritterView.swift; sourceTree = "<group>"; };
@@ -117,6 +113,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		D7460B082B0510A400D677BD /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				D7B711FC2AF505E400424557 /* AppDelegate.swift */,
+				D7B711FE2AF505E400424557 /* SceneDelegate.swift */,
+			);
+			path = AppDelegate;
+			sourceTree = "<group>";
+		};
 		D7B711F02AF505E400424557 = {
 			isa = PBXGroup;
 			children = (
@@ -138,14 +143,11 @@
 		D7B711FB2AF505E400424557 /* Remindify */ = {
 			isa = PBXGroup;
 			children = (
-				D7B711FC2AF505E400424557 /* AppDelegate.swift */,
-				D7B711FE2AF505E400424557 /* SceneDelegate.swift */,
-				D7C8F2002AFBD70200740B36 /* Helpers */,
+				D7460B082B0510A400D677BD /* AppDelegate */,
 				D7B712112AF5061A00424557 /* Views */,
 				D7B712102AF505FC00424557 /* Controllers */,
 				D7B712122AF5062300424557 /* Models */,
 				D7B712052AF505E500424557 /* Assets.xcassets */,
-				D7B712072AF505E500424557 /* LaunchScreen.storyboard */,
 				D7B2FADD2AFE761200F48441 /* Sounds */,
 				D7B7120A2AF505E500424557 /* Info.plist */,
 				D7B712222AF5226A00424557 /* GoogleService-Info.plist */,
@@ -157,14 +159,13 @@
 			isa = PBXGroup;
 			children = (
 				D7CC98462AFF11530085B63F /* Parts */,
-				D7CC98472AFF11690085B63F /* Helpers */,
 				D7B712002AF505E400424557 /* LoginViewController.swift */,
 				D7B712132AF5091E00424557 /* SignupViewController.swift */,
+				D716CCC62AF7D7010002FB7E /* HomeReminderTableViewController.swift */,
+				D75250532AF8EED600B6C264 /* AddReminderViewController.swift */,
+				D7CC98442AFF11370085B63F /* EditReminderViewController.swift */,
 				D7B712152AF5094E00424557 /* ProfileViewController.swift */,
 				D7B712172AF5095F00424557 /* PasswordViewController.swift */,
-				D716CCC62AF7D7010002FB7E /* HomeReminderTableViewController.swift */,
-				D7CC98442AFF11370085B63F /* EditReminderViewController.swift */,
-				D75250532AF8EED600B6C264 /* AddReminderViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -188,6 +189,7 @@
 		D7CC98462AFF11530085B63F /* Parts */ = {
 			isa = PBXGroup;
 			children = (
+				D7CC98472AFF11690085B63F /* Helpers */,
 				D7C8F2142AFC03F000740B36 /* Body.swift */,
 				D7C8F21B2AFC03F100740B36 /* Head.swift */,
 				D7C8F2172AFC03F000740B36 /* LeftArm.swift */,
@@ -283,11 +285,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7B2FADE2AFE761200F48441 /* Sounds in Resources */,
-				D7B712092AF505E500424557 /* LaunchScreen.storyboard in Resources */,
 				D7B712232AF5226A00424557 /* GoogleService-Info.plist in Resources */,
 				D7B712062AF505E500424557 /* Assets.xcassets in Resources */,
 				D7B712042AF505E400424557 /* Main.storyboard in Resources */,
-				D7C8F2012AFBD70300740B36 /* Helpers in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,14 +381,6 @@
 				D7B712032AF505E400424557 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		D7B712072AF505E500424557 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D7B712082AF505E500424557 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

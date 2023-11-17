@@ -32,9 +32,24 @@ class EditReminderViewController: UIViewController, UITextViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        navigationController?.navigationBar.tintColor = UIColor.systemTeal
         setupUI()
+        loadReminder()
+        
+        // Set delegate for titleView and descriptionTextView
+        titleView.delegate = self
+        descriptionTextView.delegate = self
+        
+        // Check if the user is logged in
+        if Auth.auth().currentUser == nil {
+            showSessionExpiredPopup()
+            // User is not logged in, navigate to the login view controller
+            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            self.navigationController?.pushViewController(loginViewController, animated: true)
+            return
+        }
+    }
+    
+    func loadReminder(){
         // Pre-fill the text fields with reminder data
         if let reminder = self.reminder {
             titleView.text = reminder.title
@@ -46,15 +61,6 @@ class EditReminderViewController: UIViewController, UITextViewDelegate {
                 selectedDate = dateFormatter.date(from: date)
             }
         }
-        // Set delegate for titleView and descriptionTextView
-        titleView.delegate = self
-        descriptionTextView.delegate = self
-        // Check if titleView has pre-populated text
-                titlePlaceholderLabel.isHidden = !titleView.text.isEmpty
-
-                // Check if descriptionTextView has pre-populated text
-                descriptionPlaceholderLabel.isHidden = !descriptionTextView.text.isEmpty
-
     }
     
     // Function to update the reminder in Firestore
@@ -84,6 +90,20 @@ class EditReminderViewController: UIViewController, UITextViewDelegate {
                     self.navigationController?.pushViewController(homeViewController, animated: true)
                 }
             }
+        }
+    }
+    
+    // Function to show session expired pop-up
+    func showSessionExpiredPopup() {
+        let alertController = UIAlertController(title: "Session Expired", message: nil, preferredStyle: .alert)
+        
+        // Add any additional customization to the alert controller if needed
+        
+        present(alertController, animated: true, completion: nil)
+        
+        // Dismiss the alert controller after 1 second
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            alertController.dismiss(animated: true, completion: nil)
         }
     }
     
@@ -184,7 +204,25 @@ class EditReminderViewController: UIViewController, UITextViewDelegate {
         }
     }
     
+    func textViewDidChange(_ textView: UITextView) {
+        // Check if the titleView is being edited
+        if textView == titleView {
+            titlePlaceholderLabel.isHidden = !textView.text.isEmpty
+        }
+        // Check if the descriptionTextView is being edited
+        else if textView == descriptionTextView {
+            descriptionPlaceholderLabel.isHidden = !textView.text.isEmpty
+        }
+    }
+}
+
+//MARK: - UI setup
+
+extension EditReminderViewController{
     func setupUI(){
+        view.backgroundColor = .white
+        navigationController?.navigationBar.tintColor = UIColor.systemTeal
+        
         // Create a scroll view
         let scrollView = UIScrollView()
         scrollView.isScrollEnabled = true
@@ -273,6 +311,12 @@ class EditReminderViewController: UIViewController, UITextViewDelegate {
         descriptionPlaceholderLabel.font = UIFont.systemFont(ofSize: 28)
         descriptionPlaceholderLabel.textColor = .lightGray
         
+        // Check if titleView has pre-populated text
+        titlePlaceholderLabel.isHidden = !titleView.text.isEmpty
+        
+        // Check if descriptionTextView has pre-populated text
+        descriptionPlaceholderLabel.isHidden = !descriptionTextView.text.isEmpty
+        
         // Save Button
         let saveButton = UIButton()
         saveButton.setTitle("Save", for: .normal)
@@ -318,16 +362,5 @@ class EditReminderViewController: UIViewController, UITextViewDelegate {
             descriptionPlaceholderLabel.topAnchor.constraint(equalTo: descriptionTextView.topAnchor, constant: 8),
         ])
     }
-    
-    func textViewDidChange(_ textView: UITextView) {
-            // Check if the titleView is being edited
-            if textView == titleView {
-                titlePlaceholderLabel.isHidden = !textView.text.isEmpty
-            }
-            // Check if the descriptionTextView is being edited
-            else if textView == descriptionTextView {
-                descriptionPlaceholderLabel.isHidden = !textView.text.isEmpty
-            }
-        }
     
 }
