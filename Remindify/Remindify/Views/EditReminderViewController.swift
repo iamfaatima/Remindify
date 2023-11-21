@@ -6,9 +6,7 @@
 //
 
 import UIKit
-import FirebaseFirestore
 import DateTimePicker
-import FirebaseAuth
 import AVFoundation
 import UserNotifications
 
@@ -31,67 +29,55 @@ class EditReminderViewController: UIViewController, UITextViewDelegate {
     let descriptionPlaceholderLabel: UILabel = UILabel()
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        setupUI()
-        loadReminder()
-        
-        // Set delegate for titleView and descriptionTextView
-        titleView.delegate = self
-        descriptionTextView.delegate = self
-        
-        // Check if the user is logged in
-        if Auth.auth().currentUser == nil {
-            showSessionExpiredPopup()
-            // User is not logged in, navigate to the login view controller
-            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-            self.navigationController?.pushViewController(loginViewController, animated: true)
-            return
+            super.viewDidLoad()
+            setupUI()
+            loadReminder()
+            titleView.delegate = self
+            descriptionTextView.delegate = self
+            checkUserAuthentication()
         }
-    }
-    
-    func loadReminder(){
-        // Pre-fill the text fields with reminder data
-        if let reminder = self.reminder {
-            titleView.text = reminder.title
-            descriptionTextView.text = reminder.description
-            if let date = reminder.date{
-                DispatchQueue.main.async {
-                    self.dateLabel.text = date
+
+        func loadReminder() {
+            if let reminder = self.reminder {
+                titleView.text = reminder.title
+                descriptionTextView.text = reminder.description
+                if let date = reminder.date {
+                    DispatchQueue.main.async {
+                        self.dateLabel.text = date
+                    }
+                    selectedDate = dateFormatter.date(from: date)
                 }
-                selectedDate = dateFormatter.date(from: date)
             }
         }
-    }
-    
-    // Function to update the reminder in Firestore
-    func updateReminderInFirestore(reminder: ReminderModel) {
-        if let documentID = reminder.documentID {
-            let db = Firestore.firestore()
-            print(reminder.date)
-            db.collection("reminders").document(documentID).updateData([
-                "Title": reminder.title,
-                "Description": reminder.description,
-                "Date": reminder.date // Update the date field
-            ]) { error in
+
+        func checkUserAuthentication() {
+            FirebaseService.shared.checkUserAuthentication { [weak self] isAuthenticated in
+                guard let self = self else { return }
+                if !isAuthenticated {
+                    self.showSessionExpiredPopup()
+                }
+            }
+        }
+
+        func updateReminderInFirestore(reminder: ReminderModel) {
+            FirebaseService.shared.updateReminder(reminder) { [weak self] error in
+                guard let self = self else { return }
+
                 if let error = error {
                     self.warningLabel.text = "Error updating document"
                     self.warningLabel.isHidden = false
                     print("Error updating document: \(error)")
                 } else {
                     print("Document updated successfully!")
-                    
-                    // Set up your local notification or schedule your alarm here
+
                     if let date = reminder.date {
                         self.scheduleAlarmNotification(at: date)
                     }
-                    
-                    // Optionally, you can navigate back to the previous view controller
-                    let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
-                    self.navigationController?.pushViewController(homeViewController, animated: true)
+
+                    self.navigationController?.popViewController(animated: true)
                 }
             }
         }
-    }
     
     // Function to show session expired pop-up
     func showSessionExpiredPopup() {
@@ -99,12 +85,16 @@ class EditReminderViewController: UIViewController, UITextViewDelegate {
         
         // Add any additional customization to the alert controller if needed
         
+        
         present(alertController, animated: true, completion: nil)
         
         // Dismiss the alert controller after 1 second
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             alertController.dismiss(animated: true, completion: nil)
         }
+        // User is not logged in, navigate to the login view controller
+        let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+        self.navigationController?.pushViewController(loginViewController, animated: true)
     }
     
     func scheduleAlarmNotification(at date: String) {
@@ -177,32 +167,28 @@ class EditReminderViewController: UIViewController, UITextViewDelegate {
     }
     
     @objc func saveButtonTapped() {
-        // Save the edited reminder data back to Firestore
-        if let myreminder = self.reminder {
-            var reminder = myreminder
-            // Update the reminder properties with the edited data
-            reminder.title = titleView.text
-            reminder.description = descriptionTextView.text
-            reminder.date = dateString ?? reminder.date
-            
-            if reminder.title == "" {
-                self.warningLabel.text = "Title can't be empty"
-                self.warningLabel.isHidden = false
-                return
-            }
-            
-            // Call a function to update the reminder in Firestore
-            updateReminderInFirestore(reminder: reminder)
-            
-            updateAlert = UIAlertController(title: "Reminder Updated", message: nil, preferredStyle: .alert)
-            present(updateAlert!, animated: true, completion: nil)
-            
-            // Add a delay to dismiss the alert after a few seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.updateAlert?.dismiss(animated: true, completion: nil)
+            if let myreminder = self.reminder {
+                var reminder = myreminder
+                reminder.title = titleView.text
+                reminder.description = descriptionTextView.text
+                reminder.date = dateString ?? reminder.date
+
+                if reminder.title == "" {
+                    self.warningLabel.text = "Title can't be empty"
+                    self.warningLabel.isHidden = false
+                    return
+                }
+
+                updateReminderInFirestore(reminder: reminder)
+
+                updateAlert = UIAlertController(title: "Reminder Updated", message: nil, preferredStyle: .alert)
+                present(updateAlert!, animated: true, completion: nil)
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.updateAlert?.dismiss(animated: true, completion: nil)
+                }
             }
         }
-    }
     
     func textViewDidChange(_ textView: UITextView) {
         // Check if the titleView is being edited
@@ -249,6 +235,7 @@ extension EditReminderViewController{
         titleView.font = UIFont.boldSystemFont(ofSize: 36) // Larger and bolder
         titleView.isScrollEnabled = false
         titleView.text = "Title"
+        titleView.textColor = UIColor.white
         titleView.layer.shadowColor = UIColor.systemTeal.cgColor // Shadow color
         titleView.layer.shadowOpacity = 0.7 // Shadow opacity
         titleView.layer.shadowRadius = 8.0 // Shadow radius
@@ -270,6 +257,7 @@ extension EditReminderViewController{
         descriptionTextView.font = UIFont.boldSystemFont(ofSize: 24) // Bolder font
         descriptionTextView.isScrollEnabled = false
         descriptionTextView.text = "Description"
+        descriptionTextView.textColor = UIColor.white
         descriptionTextView.layer.shadowColor = UIColor.systemTeal.cgColor // Shadow color
         descriptionTextView.layer.shadowOpacity = 0.7 // Shadow opacity
         descriptionTextView.layer.shadowRadius = 8.0 // Shadow radius
@@ -305,11 +293,11 @@ extension EditReminderViewController{
         // Placeholder labels for title and description
         titlePlaceholderLabel.text = "Title"
         titlePlaceholderLabel.font = UIFont.systemFont(ofSize: 34)
-        titlePlaceholderLabel.textColor = .lightGray
+        titlePlaceholderLabel.textColor = .white
         
         descriptionPlaceholderLabel.text = "Description"
         descriptionPlaceholderLabel.font = UIFont.systemFont(ofSize: 28)
-        descriptionPlaceholderLabel.textColor = .lightGray
+        descriptionPlaceholderLabel.textColor = .white
         
         // Check if titleView has pre-populated text
         titlePlaceholderLabel.isHidden = !titleView.text.isEmpty

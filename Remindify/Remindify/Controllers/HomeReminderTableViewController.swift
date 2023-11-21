@@ -1,12 +1,9 @@
 import UIKit
-import FirebaseFirestore
-import FirebaseAuth
 import SwipeCellKit
 import CoreMotion
 
 class HomeReminderTableViewController: UIViewController {
     
-    let db = Firestore.firestore()
     var updateAlert: UIAlertController?
     
     var reminderArray = [ReminderModel]()
@@ -28,57 +25,30 @@ class HomeReminderTableViewController: UIViewController {
         loadReminders()
     }
     
-    // Function to navigate to LoginViewController
-    func navigateToLoginViewController() {
-        let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-        self.navigationController?.pushViewController(loginViewController, animated: false)
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         self.tableView.reloadData()
     }
     
-    func loadReminders() {
-        filteredRemindersArr = []
-        
-        if let user = Auth.auth().currentUser {
-            let ownerId = user.uid  // Get the current user's UID
-            
-            db.collection("reminders")
-                .whereField("ownerId", isEqualTo: ownerId)  // Filter reminders by owner ID
-                .order(by: "Date", descending: true) // Make sure "Date" is spelled correctly (use uppercase "D")
-                .addSnapshotListener() { (querySnapshot, err) in
-                    if let err = err {
-                        print("Error getting documents: \(err)")
-                    } else {
-                        self.filteredRemindersArr = []
-                        if let snapshotDocuments = querySnapshot?.documents {
-                            for document in snapshotDocuments {
-                                let data = document.data()
-                                if let title = data["Title"] as? String {
-                                    let documentID = document.documentID // Retrieve the Firestore document ID
-                                    let newReminder = ReminderModel(
-                                        title: title,
-                                        description: data["Description"] as! String,
-                                        date: data["Date"] as? String,
-                                        documentID: documentID, ownerId: ownerId)
-                                    self.filteredRemindersArr.append(newReminder)
-                                }
-                                else{
-                                    print("error")
-                                }
-                            }
-                            // Set the originalRemindersArr to the filteredRemindersArr
-                            self.originalRemindersArr = self.filteredRemindersArr
-                        }else{print("errorr")}
-                        // Reload the table view after updating the data
-                        self.tableView.reloadData()
-                    }
-                }
-        }
+    // Function to navigate to LoginViewController
+    func navigateToLoginViewController() {
+        let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+        self.navigationController?.pushViewController(loginViewController, animated: false)
     }
+    
+    func loadReminders() {
+            FirebaseService.shared.loadReminders { result in
+                switch result {
+                case .success(let reminders):
+                    self.filteredRemindersArr = reminders
+                    self.originalRemindersArr = reminders
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    print("Error loading reminders: \(error.localizedDescription)")
+                }
+            }
+        }
     
     @objc func addReminderButtonTapped() {
         //navigate to add reminders
@@ -92,28 +62,30 @@ class HomeReminderTableViewController: UIViewController {
         self.navigationController?.pushViewController(profileViewController, animated: true)
     }
     
-    @objc func logoutButtonTapped() {
-        // Handle the action for the left bar button (Logout)
-        do {
-            try Auth.auth().signOut()
-            updateAlert = UIAlertController(title: "Logging Out", message: nil, preferredStyle: .alert)
-            present(updateAlert!, animated: true, completion: nil)
-            
-            // Add a delay to dismiss the alert after a few seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.updateAlert?.dismiss(animated: true, completion: nil)
-                
-                // Navigate to the login view controller on the main thread
-                DispatchQueue.main.async {
-                    let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-                    self.navigationController?.pushViewController(loginViewController, animated: true)
+    // Function to sign out
+        @objc func logoutButtonTapped() {
+            FirebaseService.shared.signOut { success, error in
+                if success {
+                    self.updateAlert = UIAlertController(title: "Logging Out", message: nil, preferredStyle: .alert)
+                    self.present(self.updateAlert!, animated: true, completion: nil)
+
+                    // Add a delay to dismiss the alert after a few seconds
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.updateAlert?.dismiss(animated: true, completion: nil)
+
+                        // Navigate to the login view controller on the main thread
+                        DispatchQueue.main.async {
+                            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+                            self.navigationController?.pushViewController(loginViewController, animated: true)
+                        }
+                    }
+                } else {
+                    print("Error during sign out: \(error?.localizedDescription ?? "")")
+                    // Handle sign-out error
                 }
             }
-            
-        } catch {
-            print("Error while signing out: \(error)")
         }
-    }
+
     
 }
 
@@ -122,16 +94,14 @@ class HomeReminderTableViewController: UIViewController {
 extension HomeReminderTableViewController{
     // Function to check user authentication
     func checkUserAuthentication() {
-        if Auth.auth().currentUser == nil {
-            // Show session expired pop-up
-            showSessionExpiredPopup()
-            
-            // Navigate to login view controller after 1 second
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.navigateToLoginViewController()
+            FirebaseService.shared.checkUserAuthentication { isAuthenticated in
+                if !isAuthenticated {
+                    // Show session expired pop-up
+                    self.showSessionExpiredPopup()
+                }
             }
         }
-    }
+
     
     // Function to show session expired pop-up
     func showSessionExpiredPopup() {
@@ -144,6 +114,11 @@ extension HomeReminderTableViewController{
         // Dismiss the alert controller after 1 second
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             alertController.dismiss(animated: true, completion: nil)
+        }
+        
+        // Navigate to login view controller after 1 second
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.navigateToLoginViewController()
         }
     }
 }
@@ -181,7 +156,9 @@ extension HomeReminderTableViewController: UITableViewDelegate, UITableViewDataS
         let selectedReminder = filteredRemindersArr[indexPath.row]
         
         let editViewController = self.storyboard?.instantiateViewController(withIdentifier: "EditReminderViewController") as! EditReminderViewController
+        
         editViewController.reminder = selectedReminder
+        
         self.navigationController?.pushViewController(editViewController, animated: true)
     }
 }
@@ -364,24 +341,21 @@ extension HomeReminderTableViewController: SwipeTableViewCellDelegate{
                     
                     self.filteredRemindersArr.remove(at: indexToDelete)
                     
-                    // Update Firestore
-                    self.db.collection("reminders").document(documentId).delete { error in
+                    // Use FirebaseService to delete the reminder
+                    FirebaseService.shared.deleteReminder(documentID: documentId) { error in
                         if let error = error {
-                            print("Error deleting document: \(error)")
+                            print("Error deleting reminder: \(error)")
                         } else {
+                            print("Reminder successfully deleted!")
                             
-                            print("Document successfully deleted!")
-                            //...
-                            // Obtain the notification identifier
-                            let notificationIdentifier = "Reminder_\(documentId)"
                             // Remove the local notification with the obtained identifier
+                            let notificationIdentifier = "Reminder_\(documentId)"
                             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
+                            
                             // Firestore will trigger the snapshot listener, updating the table view
+                            self.loadReminders()
                         }
-                        self.loadReminders()
                     }
-                    
-                    
                 }
             }
         }
@@ -391,7 +365,7 @@ extension HomeReminderTableViewController: SwipeTableViewCellDelegate{
         
         return [deleteAction]
     }
-    
+
     
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
         var options = SwipeOptions()
@@ -493,11 +467,16 @@ extension HomeReminderTableViewController{
         customButton.layer.cornerRadius = buttonSize / 2  // Make it rounded
         customButton.clipsToBounds = true
         
-        if let user = Auth.auth().currentUser, let photoURL = user.photoURL {
-            // Load the user's profile image
-            customButton.sd_setBackgroundImage(with: photoURL, for: .normal, placeholderImage: UIImage(systemName: "person.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal))
+        if let currentUser = FirebaseService.shared.currentUser {
+            // Load the user's profile image using FirebaseService
+            if let photoURL = currentUser.photoURL {
+                customButton.sd_setBackgroundImage(with: photoURL, for: .normal, placeholderImage: UIImage(systemName: "person.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal))
+            } else {
+                // Use the default white "person.circle.fill" symbol
+                customButton.setImage(UIImage(systemName: "person.circle.fill")?.withTintColor(.dark, renderingMode: .alwaysOriginal), for: .normal)
+            }
         } else {
-            // Use the default white "person.circle.fill" symbol
+            // Handle the case where the user is not logged in
             customButton.setImage(UIImage(systemName: "person.circle.fill")?.withTintColor(.dark, renderingMode: .alwaysOriginal), for: .normal)
         }
         
@@ -509,4 +488,5 @@ extension HomeReminderTableViewController{
         let profileBarButton = UIBarButtonItem(customView: customView)
         self.navigationItem.rightBarButtonItem = profileBarButton
     }
+
 }

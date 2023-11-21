@@ -6,15 +6,12 @@
 //
 
 import UIKit
-import FirebaseFirestore
 import DateTimePicker
-import FirebaseAuth
 import UserNotifications
 import AVFoundation
 
 class AddReminderViewController: UIViewController, UITextViewDelegate {
     
-    let db = Firestore.firestore()
     var reminder = ReminderModel()
     
     var updateAlert: UIAlertController?
@@ -38,20 +35,21 @@ class AddReminderViewController: UIViewController, UITextViewDelegate {
         super.viewDidLoad()
         setupUI()
         UNUserNotificationCenter.current().delegate = self
-        
+
         // Set delegate for titleView and descriptionTextView
         titleView.delegate = self
         descriptionTextView.delegate = self
-        
-        // Check if the user is logged in
-        if Auth.auth().currentUser == nil {
-            showSessionExpiredPopup()
-            // User is not logged in, navigate to the login view controller
-            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-            self.navigationController?.pushViewController(loginViewController, animated: true)
-            return
+
+        // Check if the user is logged in using FirebaseService
+        FirebaseService.shared.checkUserAuthentication { [weak self] isAuthenticated in
+            guard let self = self else { return }
+            if !isAuthenticated {
+                self.showSessionExpiredPopup()
+                
+            }
         }
     }
+
     
     // Function to show session expired pop-up
     func showSessionExpiredPopup() {
@@ -64,59 +62,44 @@ class AddReminderViewController: UIViewController, UITextViewDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             alertController.dismiss(animated: true, completion: nil)
         }
+        // User is not logged in, navigate to the login view controller
+        let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+        self.navigationController?.pushViewController(loginViewController, animated: true)
     }
     
     @objc func saveButtonTapped() {
-        if titleView.text!.isEmpty {
+        guard let title = titleView.text, !title.isEmpty else {
             warningLabel.isHidden = false
             warningLabel.text = "Title can't be empty"
             return
         }
-        
-        if let user = Auth.auth().currentUser {
-            let ownerId = user.uid  // Get the current user's UID
-            
-            reminder.title = titleView.text!
-            reminder.description = descriptionTextView.text ?? ""
-            reminder.date = selectedDate ?? ""
-            
-            if let title = reminder.title {
-                let reminderData: [String: Any] = [
-                    "Title": title,
-                    "Description": reminder.description,
-                    "Date": reminder.date,
-                    "ownerId": ownerId  // Set the owner's UID
-                ]
-                
-                db.collection("reminders").addDocument(data: reminderData) { err in
-                    if let err = err {
-                        print("Error adding document: \(err)")
-                    } else {
-                        print("Document added with ID")
-                        self.updateAlert = UIAlertController(title: "Reminder Added", message: nil, preferredStyle: .alert)
-                        self.present(self.updateAlert!, animated: true, completion: nil)
-                        
-                        // Add a delay to dismiss the alert after a few seconds
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            self.updateAlert?.dismiss(animated: true, completion: nil)
-                        }
-                    }
+
+        let reminder = ReminderModel(title: title, description: descriptionTextView.text, date: selectedDate)
+
+        FirebaseService.shared.addReminder(reminder) { [weak self] error in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("Error adding reminder: \(error.localizedDescription)")
+                return
+            } else {
+                print("Reminder added successfully")
+
+                // Handle UI updates or navigation as needed
+
+                self.updateAlert = UIAlertController(title: "Reminder Added", message: nil, preferredStyle: .alert)
+                self.present(self.updateAlert!, animated: true, completion: nil)
+
+                // Add a delay to dismiss the alert after a few seconds
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.updateAlert?.dismiss(animated: true, completion: nil)
                 }
             }
-            if let date = selectedDate{
-                DispatchQueue.main.async {
-                    self.dateLabel.text = date
-                    self.dateLabel.isHidden = false
-                }
-                scheduleAlarmNotification(at: date)
-            }
-            
         }
-        
         //navigate to home
-        let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
-        self.navigationController?.pushViewController(homeViewController, animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
+
 }
 //MARK: - DateTime Picker
 
@@ -255,6 +238,7 @@ extension AddReminderViewController {
         titleView.font = UIFont.boldSystemFont(ofSize: 36) // Larger and bolder
         titleView.isScrollEnabled = false
         titleView.text = ""
+        titleView.textColor = UIColor.white
         titleView.layer.shadowColor = UIColor.systemTeal.cgColor // Shadow color
         titleView.layer.shadowOpacity = 0.7 // Shadow opacity
         titleView.layer.shadowRadius = 8.0 // Shadow radius
@@ -276,6 +260,7 @@ extension AddReminderViewController {
         descriptionTextView.font = UIFont.boldSystemFont(ofSize: 24) // Bolder font
         descriptionTextView.isScrollEnabled = false
         descriptionTextView.text = ""
+        descriptionTextView.textColor = UIColor.white
         descriptionTextView.layer.shadowColor = UIColor.systemTeal.cgColor // Shadow color
         descriptionTextView.layer.shadowOpacity = 0.7 // Shadow opacity
         descriptionTextView.layer.shadowRadius = 8.0 // Shadow radius
@@ -311,11 +296,11 @@ extension AddReminderViewController {
         // Placeholder labels for title and description
         titlePlaceholderLabel.text = "Title"
         titlePlaceholderLabel.font = UIFont.systemFont(ofSize: 34)
-        titlePlaceholderLabel.textColor = .lightGray
+        titlePlaceholderLabel.textColor = .white
         
         descriptionPlaceholderLabel.text = "Description"
         descriptionPlaceholderLabel.font = UIFont.systemFont(ofSize: 28)
-        descriptionPlaceholderLabel.textColor = .lightGray
+        descriptionPlaceholderLabel.textColor = .white
         
         // Save Button
         let saveButton = UIButton()

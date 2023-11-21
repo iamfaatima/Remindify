@@ -1,23 +1,6 @@
 
 import UIKit
 import MBProgressHUD
-import FirebaseAuth
-
-let critterViewTopMargin: CGFloat = 70
-let textFieldHeight: CGFloat = 37
-let critterViewDimension: CGFloat = 160
-let textFieldHorizontalMargin: CGFloat = 16.5
-let textFieldSpacing: CGFloat = 22
-let textFieldTopMargin: CGFloat = 38.8
-let textFieldWidth: CGFloat = 206
-let buttonFrame = CGRect(x: 0, y: 0, width: buttonWidth, height: buttonHeight)
-let buttonHeight = textFieldHeight
-let buttonHorizontalMargin = textFieldHorizontalMargin / 2
-let buttonImageDimension: CGFloat = 18
-let buttonVerticalMargin = (buttonHeight - buttonImageDimension) / 2
-let buttonWidth = (textFieldHorizontalMargin / 2) + buttonImageDimension
-let critterViewFrame = CGRect(x: 0, y: 0, width: critterViewDimension, height: critterViewDimension)
-
 
 final class LoginViewController: UIViewController, UITextFieldDelegate {
     
@@ -29,7 +12,26 @@ final class LoginViewController: UIViewController, UITextFieldDelegate {
         passwordTextField.text = "1234567"
     }
     
-    let critterView = CritterView(frame: critterViewFrame)
+    lazy var buttonHorizontalMargin = textFieldHorizontalMargin / 2
+    let buttonImageDimension: CGFloat = 18
+    lazy var buttonVerticalMargin = (buttonHeight - buttonImageDimension) / 2
+    let critterViewDimension: CGFloat = 160
+    let critterViewTopMargin: CGFloat = 70
+    let textFieldHeight: CGFloat = 37
+    let textFieldHorizontalMargin: CGFloat = 16.5
+    let textFieldSpacing: CGFloat = 22
+    let textFieldTopMargin: CGFloat = 38.8
+    let textFieldWidth: CGFloat = 206
+    
+    lazy var buttonHeight: CGFloat = textFieldHeight
+    lazy var buttonWidth: CGFloat = (textFieldHorizontalMargin / 2) + 18
+    lazy var buttonFrame: CGRect = CGRect(x: 0, y: 0, width: buttonWidth, height: buttonHeight)
+    
+    lazy var critterViewFrame: CGRect = {
+           CGRect(x: 0, y: 0, width: critterViewDimension, height: critterViewDimension)
+       }()
+    
+    lazy var critterView = CritterView(frame: critterViewFrame)
     
     lazy var emailTextField: UITextField = {
         let textField = createTextField(text: "Email")
@@ -90,26 +92,30 @@ final class LoginViewController: UIViewController, UITextFieldDelegate {
         loadingIndicator.mode = .indeterminate
         loadingIndicator.label.text = "Logging in..."
         
-        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+        FirebaseService.shared.signInWithEmail(email, password: password) { result in
             // Hide loading indicator
             MBProgressHUD.hide(for: self.view, animated: true)
             
-            if let error = error {
-                print(error.localizedDescription)
+            switch result {
+            case .success(let user):
+                print("Login successful. User: \(user?.email ?? "")")
+                
+                // Navigate to home
+                let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
+                self.navigationController?.pushViewController(homeViewController, animated: true)
+                
+            case .failure(let error):
+                print("Login failed. Error: \(error.localizedDescription)")
                 
                 // Show error message
                 DispatchQueue.main.async {
                     self.warningLabel.isHidden = false
                     self.warningLabel.text = "Wrong username or password. Try again."
                 }
-            } else {
-                // Navigate to home
-                let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
-                self.navigationController?.pushViewController(homeViewController, animated: true)
             }
         }
     }
-    
+
     @objc func signupButtonTapped() {
         //navigate to signup
         let signupViewController = self.storyboard?.instantiateViewController(withIdentifier: "SignupViewController") as! SignupViewController

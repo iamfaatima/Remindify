@@ -1,9 +1,4 @@
 import UIKit
-import FirebaseAuth
-import FirebaseFirestore
-import FirebaseCore
-import Firebase
-import FirebaseStorage
 import SDWebImage
 import MBProgressHUD
 
@@ -20,27 +15,40 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
     let saveButton = UIButton(type: .custom)
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        setupUI()
-        
-        if let user = Auth.auth().currentUser {
-            let userName = user.displayName
-            let userEmail = user.email
-            emailTextField.text = userEmail
-            nameTextField.text = userName
-            loadProfileImage()
+            super.viewDidLoad()
+            setupUI()
+
+            FirebaseService.shared.checkUserAuthentication { [weak self] isLoggedIn in
+                guard let self = self else { return }
+
+                if isLoggedIn {
+                    // User is logged in, load profile information
+                    self.loadProfileInformation()
+                } else {
+                    // User is not logged in, show session expired popup and navigate to login view controller
+                    self.showSessionExpiredPopup()
+                    let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+                    self.navigationController?.pushViewController(loginViewController, animated: true)
+                }
+            }
         }
-        
-        // Check if the user is logged in
-        if Auth.auth().currentUser == nil {
-            showSessionExpiredPopup()
-            // User is not logged in, navigate to the login view controller
-            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-            self.navigationController?.pushViewController(loginViewController, animated: true)
-            return
+
+    func loadProfileInformation() {
+            FirebaseService.shared.getCurrentUser { [weak self] user in
+                guard let self = self else { return }
+
+                if let user = user {
+                    let userName = user.displayName
+                    let userEmail = user.email
+                    self.emailTextField.text = userEmail
+                    self.nameTextField.text = userName
+                    self.loadProfileImage()
+                } else {
+                    self.warningLabel.isHidden = false
+                    self.warningLabel.text = "Error loading"
+                }
+            }
         }
-        
-    }
     
     @IBAction func changeImageButtonPressed(_ sender: UIButton) {
         let imagePicker = UIImagePickerController()
@@ -71,45 +79,35 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func saveNameButtonPressed() {
-        // Validate the name before saving
-        guard let updatedName = nameTextField.text, !updatedName.isEmpty else {
-            DispatchQueue.main.async {
-                self.warningLabel.isHidden = false
-                self.warningLabel.text = "Name Field can't be empty"
-            }
-            print("Name Field can't be empty")
-            return
-        }
-        
-        // Update the user's display name in Firebase
-        if let user = Auth.auth().currentUser {
-            let changeRequest = user.createProfileChangeRequest()
-            changeRequest.displayName = updatedName
-            changeRequest.commitChanges { error in
-                if let _ = error {
-                    DispatchQueue.main.async {
-                        self.warningLabel.isHidden = false
-                        self.warningLabel.text = "Error updating user profile"
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        self.warningLabel.isHidden = false
-                        self.warningLabel.text = "User profile updated successfully"
-                        self.warningLabel.textColor = UIColor.white
-                    }
-                }
-            }
-        } else {
-            DispatchQueue.main.async {
-                self.warningLabel.isHidden = false
-                self.warningLabel.text = "Error. Try Again."
-            }
-        }
-        
-        // Disable the save button after saving
-        saveButton.isEnabled = false
-    }
-    
+           guard let updatedName = nameTextField.text, !updatedName.isEmpty else {
+               DispatchQueue.main.async {
+                   self.warningLabel.isHidden = false
+                   self.warningLabel.text = "Name Field can't be empty"
+               }
+               print("Name Field can't be empty")
+               return
+           }
+
+           // Use FirebaseService to update the user's display name
+           FirebaseService.shared.updateDisplayName(updatedName) { [weak self] error in
+               if let error = error {
+                   DispatchQueue.main.async {
+                       self?.warningLabel.isHidden = false
+                       self?.warningLabel.text = "Error updating user profile: \(error.localizedDescription)"
+                   }
+               } else {
+                   DispatchQueue.main.async {
+                       self?.warningLabel.isHidden = false
+                       self?.warningLabel.text = "User profile updated successfully"
+                       self?.warningLabel.textColor = UIColor.white
+                   }
+               }
+           }
+
+           // Disable the save button after saving
+           saveButton.isEnabled = false
+       }
+
     @objc func textFieldDidChange(_ textField: UITextField) {
         // Enable the save button when the name text field is edited
         saveButton.isEnabled = true
@@ -134,66 +132,46 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-            if let pickedImage = info[.editedImage] as? UIImage {
-                
-                // Show a loading indicator using MBProgressHUD
-                let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
-                self.navigationController?.navigationBar.isUserInteractionEnabled = false
-                hud.mode = .indeterminate
-                hud.label.text = "Uploading Image..."
-                
-                // Upload the image to Firebase Storage
-                let storage = Storage.storage()
-                let storageRef = storage.reference().child("images/\(UUID().uuidString).jpg")
-                
-                if let imageData = pickedImage.jpegData(compressionQuality: 0.8) {
-                    let uploadTask = storageRef.putData(imageData, metadata: nil) { (metadata, error) in
-                        // Hide the loading indicator
-                        MBProgressHUD.hide(for: self.view, animated: true)
-                        self.navigationController?.navigationBar.isUserInteractionEnabled = true
-                        guard error == nil else {
-                            // Handle the error
-                            print("Error uploading image: \(error!.localizedDescription)")
-                            return
-                        }
-                        
-                        // Image uploaded successfully
-                        print("Image uploaded to Firebase Storage")
-                        
-                        // Show a loading indicator while retrieving the download URL
-                        let loadingLabel = UILabel()
-                        loadingLabel.text = "Loading..."
-                        loadingLabel.center = self.view.center
-                        self.view.addSubview(loadingLabel)
-                        
-                        // Get the download URL
-                        storageRef.downloadURL { (url, error) in
-                            // Remove the loading label
-                            loadingLabel.removeFromSuperview()
-                            
-                            if let downloadURL = url {
-                                if let user = Auth.auth().currentUser {
-                                    // Set the user's photoURL
-                                    let changeRequest = user.createProfileChangeRequest()
-                                    changeRequest.photoURL = downloadURL
-                                    changeRequest.commitChanges { error in
-                                        if let error = error {
-                                            print("Error setting photoURL: \(error.localizedDescription)")
-                                        } else {
-                                            print("photoURL set in Firebase Authentication profile")
-                                            
-                                            // Use SDWebImage to display the image
-                                            self.profileImageView.sd_setImage(with: downloadURL, placeholderImage: pickedImage)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            dismiss(animated: true, completion: nil)
-        }
+           if let pickedImage = info[.editedImage] as? UIImage {
+               // Show a loading indicator using MBProgressHUD
+               let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
+               self.navigationController?.navigationBar.isUserInteractionEnabled = false
+               hud.mode = .indeterminate
+               hud.label.text = "Uploading Image..."
+
+               FirebaseService.shared.uploadProfileImage(image: pickedImage) { [weak self] result in
+                   guard let self = self else { return }
+
+                   // Hide the loading indicator
+                   MBProgressHUD.hide(for: self.view, animated: true)
+                   self.navigationController?.navigationBar.isUserInteractionEnabled = true
+
+                   switch result {
+                   case .success(let downloadURL):
+                       // Image uploaded successfully
+                       print("Image uploaded to Firebase Storage")
+
+                       // Set the user's photoURL
+                       FirebaseService.shared.updateUserProfilePhotoURL(downloadURL) { error in
+                           if let error = error {
+                               print("Error setting photoURL: \(error.localizedDescription)")
+                           } else {
+                               print("photoURL set in Firebase Authentication profile")
+
+                               // Use SDWebImage to display the image
+                               self.profileImageView.sd_setImage(with: downloadURL, placeholderImage: pickedImage)
+                           }
+                       }
+
+                   case .failure(let error):
+                       // Handle the error
+                       print("Error uploading image: \(error.localizedDescription)")
+                   }
+               }
+           }
+
+           dismiss(animated: true, completion: nil)
+       }
 
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             dismiss(animated: true, completion: nil)
@@ -309,9 +287,25 @@ extension ProfileViewController{
     }
     
     func loadProfileImage() {
-        if let user = Auth.auth().currentUser, let photoURL = user.photoURL {
-            profileImageView.sd_setImage(with: photoURL, placeholderImage: UIImage(named: "Profile"))
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 100, weight: .regular, scale: .large)
+        // Create a white symbol image
+        let symbolImage = UIImage(systemName: "person.circle.fill", withConfiguration: symbolConfiguration)?.withTintColor(.white, renderingMode: .alwaysOriginal)
+
+        FirebaseService.shared.getCurrentUserPhotoURL { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let photoURL):
+                // Use SDWebImage to display the image
+                self.profileImageView.sd_setImage(with: photoURL, placeholderImage: symbolImage)
+
+            case .failure(let error):
+                print("Error loading profile image: \(error.localizedDescription)")
+                // Use the symbol image as a placeholder
+                self.profileImageView.image = symbolImage
+            }
         }
     }
+
     
 }

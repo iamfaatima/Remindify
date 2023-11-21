@@ -1,6 +1,6 @@
 
 import UIKit
-import FirebaseAuth
+import MBProgressHUD
 
 final class SignupViewController: UIViewController, UITextFieldDelegate {
     
@@ -105,58 +105,55 @@ final class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func signupButtonTapped() {
-        if nameTextField.text == ""{
+        if nameTextField.text == "" {
             DispatchQueue.main.async {
                 self.warningLabel.isHidden = false
                 self.warningLabel.text = "Name is required"
             }
             return
         }
-        if let name = nameTextField.text, let email = emailTextField.text, let password = passwordTextField.text {
-            if password == confirmPasswordTextField.text {
-                Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-                    if let error = error {
-                        print(error.localizedDescription)
-                        DispatchQueue.main.async {
-                            self.warningLabel.isHidden = false
-                            self.warningLabel.text = "\(error.localizedDescription)"
-                        }
-                    } else {
-                        // Successfully created the user, now save the user's name
-                        if let user = Auth.auth().currentUser {
-                            // Create a user profile change request
-                            let changeRequest = user.createProfileChangeRequest()
-                            changeRequest.displayName = name
-                            changeRequest.photoURL = nil
 
-                            // Commit the changes to the user's profile
-                            changeRequest.commitChanges { error in
-                                if let error = error {
-                                    DispatchQueue.main.async {
-                                        self.warningLabel.isHidden = false
-                                        self.warningLabel.text = "\(error.localizedDescription)"
-                                    }
-                                } else {
-                                    DispatchQueue.main.async {
-                                        self.warningLabel.isHidden = false
-                                        self.warningLabel.text = "User profile created successfully"
-                                        self.warningLabel.textColor = UIColor.green
-                                    }
-                                }
-                            }
+        guard let name = nameTextField.text,
+              let email = emailTextField.text,
+              let password = passwordTextField.text,
+              let confirmPassword = confirmPasswordTextField.text else {
+            return
+        }
 
-                            //navigate to home
-                            let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
-                            self.navigationController?.pushViewController(homeViewController, animated: true)
-                        }
+        if password == confirmPassword {
+            // Show loading indicator
+            let loadingIndicator = MBProgressHUD.showAdded(to: view, animated: true)
+            loadingIndicator.mode = .indeterminate
+            loadingIndicator.label.text = "Signing up..."
+
+            FirebaseService.shared.createUserWithEmail(name, email: email, password: password) { result in
+                // Hide loading indicator
+                MBProgressHUD.hide(for: self.view, animated: true)
+
+                switch result {
+                case .success(let user):
+                    print("User registration successful. User: \(user?.email ?? "")")
+
+                    // Navigate to home
+                    let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "HomeReminderTableViewController") as! HomeReminderTableViewController
+                    self.navigationController?.pushViewController(homeViewController, animated: true)
+
+                case .failure(let error):
+                    print("User registration failed. Error: \(error.localizedDescription)")
+
+                    // Show error message
+                    DispatchQueue.main.async {
+                        self.warningLabel.isHidden = false
+                        self.warningLabel.text = "\(error.localizedDescription)"
                     }
                 }
-            } else {
-                self.warningLabel.isHidden = false
-                self.warningLabel.text = "Password and Confirm Password does not match"
             }
+        } else {
+            self.warningLabel.isHidden = false
+            self.warningLabel.text = "Password and Confirm Password do not match"
         }
     }
+
     
     let notificationCenter: NotificationCenter = .default
     

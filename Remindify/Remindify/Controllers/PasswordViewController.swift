@@ -1,6 +1,7 @@
 import UIKit
 import FirebaseAuth
 
+
 class PasswordViewController: UIViewController {
     
     // MARK: - Outlets
@@ -18,15 +19,16 @@ class PasswordViewController: UIViewController {
         setupView()
         setupConstraints()
         
-        // Check if the user is logged in
-        if Auth.auth().currentUser == nil {
-            showSessionExpiredPopup()
-            // User is not logged in, navigate to the login view controller
-            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-            self.navigationController?.pushViewController(loginViewController, animated: true)
-            return
+        // Check if the user is logged in using FirebaseService
+        FirebaseService.shared.checkUserAuthentication { [weak self] isAuthenticated in
+            guard let self = self else { return }
+
+            if !isAuthenticated {
+                self.showSessionExpiredPopup()
+            }
         }
     }
+
     
     // Function to show session expired pop-up
     func showSessionExpiredPopup() {
@@ -42,23 +44,35 @@ class PasswordViewController: UIViewController {
         }
     }
     // MARK: - Actions
-    
+
     @IBAction func saveChangesButtonPressed(_ sender: UIButton) {
         guard let newPassword = newPasswordTextField.text, let confirmPassword = confirmPasswordTextField.text, newPassword == confirmPassword else {
             showPasswordMismatchWarning()
             return
         }
         
-        if let user = Auth.auth().currentUser, let oldPassword = oldPasswordTextField.text {
-            reauthenticateUser(user: user, oldPassword: oldPassword, newPassword: newPassword)
+        // Check if the user is logged in
+        guard let user = FirebaseService.shared.currentUser else {
+            // User is not logged in, handle the error or show a relevant message
+            return
         }
+
+        reauthenticateUser(user: user, oldPassword: oldPasswordTextField.text, newPassword: newPassword)
     }
-    
+
     // MARK: - Private Methods
-    
-    private func reauthenticateUser(user: User, oldPassword: String, newPassword: String) {
-        let credential = EmailAuthProvider.credential(withEmail: user.email!, password: oldPassword)
-        user.reauthenticate(with: credential) { _, error in
+
+    private func reauthenticateUser(user: User, oldPassword: String?, newPassword: String) {
+        guard let email = user.email, let oldPassword = oldPassword else {
+            // Handle the missing information
+            showNilFieldWarning()
+            return
+        }
+
+        let credential = EmailAuthProvider.credential(withEmail: email, password: oldPassword)
+        FirebaseService.shared.reauthenticateUser(with: credential) { [weak self] error in
+            guard let self = self else { return }
+
             if let error = error {
                 self.showIncorrectPasswordWarning()
             } else {
@@ -66,9 +80,11 @@ class PasswordViewController: UIViewController {
             }
         }
     }
-    
+
     private func changeUserPassword(user: User, newPassword: String) {
-        user.updatePassword(to: newPassword) { error in
+        FirebaseService.shared.changeUserPassword(user: user, newPassword: newPassword) { [weak self] error in
+            guard let self = self else { return }
+
             if let error = error {
                 self.handlePasswordChangeError(error: error)
             } else {
@@ -76,7 +92,38 @@ class PasswordViewController: UIViewController {
             }
         }
     }
-    
+
+    private func expireSessionAndNavigateToLogin() {
+        FirebaseService.shared.signOut { [weak self] success, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("Error while signing out: \(error)")
+                // Handle the error, show an alert, or take appropriate action
+            } else if success {
+                // Show an alert or loading indicator if needed
+                self.updateAlert = UIAlertController(title: "Logging Out", message: nil, preferredStyle: .alert)
+                self.present(self.updateAlert!, animated: true, completion: nil)
+                
+                // Add a delay to dismiss the alert after a few seconds
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.updateAlert?.dismiss(animated: true) {
+                        // Navigate back to the previous view controller
+                        let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+                        self.navigationController?.pushViewController(loginViewController, animated: true)
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    private func showNilFieldWarning() {
+        warningLabel.isHidden = false
+        warningLabel.text = "Field can't be empty"
+    }
+
     private func showIncorrectPasswordWarning() {
         warningLabel.isHidden = false
         warningLabel.text = "Old password is incorrect"
@@ -101,28 +148,6 @@ class PasswordViewController: UIViewController {
         warningLabel.textColor = .white
         // Expire the session and navigate to LoginViewController
         expireSessionAndNavigateToLogin()
-    }
-    
-    private func expireSessionAndNavigateToLogin() {
-        do {
-            try Auth.auth().signOut()
-            updateAlert = UIAlertController(title: "Logging Out", message: nil, preferredStyle: .alert)
-            present(updateAlert!, animated: true, completion: nil)
-            
-            // Add a delay to dismiss the alert after a few seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                self.updateAlert?.dismiss(animated: true, completion: nil)
-                
-                // Navigate to the login view controller on the main thread
-                DispatchQueue.main.async {
-                    let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-                    self.navigationController?.pushViewController(loginViewController, animated: true)
-                }
-            }
-            
-        } catch {
-            print("Error while signing out: \(error)")
-        }
     }
     
     // MARK: - Private UI Setup Methods

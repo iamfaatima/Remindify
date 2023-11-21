@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		43778FF30978F9FE3ED8315E /* Pods_Remindify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06DB01B93FAC04BDE761FA73 /* Pods_Remindify.framework */; };
 		D716CCC72AF7D7010002FB7E /* HomeReminderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D716CCC62AF7D7010002FB7E /* HomeReminderTableViewController.swift */; };
+		D73701122B0CAA7E00AE082F /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73701112B0CAA7E00AE082F /* FirebaseService.swift */; };
 		D75250522AF8E6B600B6C264 /* ReminderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75250512AF8E6B600B6C264 /* ReminderModel.swift */; };
 		D75250542AF8EED600B6C264 /* AddReminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75250532AF8EED600B6C264 /* AddReminderViewController.swift */; };
 		D7B2FADE2AFE761200F48441 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = D7B2FADD2AFE761200F48441 /* Sounds */; };
@@ -48,6 +49,7 @@
 		64CED0FED67C3C92370201E0 /* Pods-Remindify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Remindify.release.xcconfig"; path = "Target Support Files/Pods-Remindify/Pods-Remindify.release.xcconfig"; sourceTree = "<group>"; };
 		9682E0D6FC77C55789529C66 /* Pods-Remindify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Remindify.debug.xcconfig"; path = "Target Support Files/Pods-Remindify/Pods-Remindify.debug.xcconfig"; sourceTree = "<group>"; };
 		D716CCC62AF7D7010002FB7E /* HomeReminderTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeReminderTableViewController.swift; sourceTree = "<group>"; };
+		D73701112B0CAA7E00AE082F /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
 		D75250512AF8E6B600B6C264 /* ReminderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderModel.swift; sourceTree = "<group>"; };
 		D75250532AF8EED600B6C264 /* AddReminderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReminderViewController.swift; sourceTree = "<group>"; };
 		D7B2FADD2AFE761200F48441 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
@@ -113,6 +115,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		D73701132B0CAA8400AE082F /* NetworkLayer */ = {
+			isa = PBXGroup;
+			children = (
+				D73701112B0CAA7E00AE082F /* FirebaseService.swift */,
+			);
+			path = NetworkLayer;
+			sourceTree = "<group>";
+		};
 		D7460B082B0510A400D677BD /* AppDelegate */ = {
 			isa = PBXGroup;
 			children = (
@@ -144,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				D7460B082B0510A400D677BD /* AppDelegate */,
+				D73701132B0CAA8400AE082F /* NetworkLayer */,
 				D7B712112AF5061A00424557 /* Views */,
 				D7B712102AF505FC00424557 /* Controllers */,
 				D7B712122AF5062300424557 /* Models */,
@@ -356,6 +367,7 @@
 				D7C8F2202AFC03F100740B36 /* Muzzle.swift in Sources */,
 				D7B712162AF5094E00424557 /* ProfileViewController.swift in Sources */,
 				D7C8F20F2AFC03C300740B36 /* UIColors+ColorPallete.swift in Sources */,
+				D73701122B0CAA7E00AE082F /* FirebaseService.swift in Sources */,
 				D7C8F21F2AFC03F100740B36 /* RightArm.swift in Sources */,
 				D7B712142AF5091E00424557 /* SignupViewController.swift in Sources */,
 				D7B711FF2AF505E400424557 /* SceneDelegate.swift in Sources */,
